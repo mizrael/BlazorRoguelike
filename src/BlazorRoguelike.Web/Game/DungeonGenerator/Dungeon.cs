@@ -186,7 +186,7 @@ namespace BlazorRoguelike.Web.Game.DungeonGenerator
                 //tiles[maxPoint.X, maxPoint.Y] = TileType.WallAngleNO;
             }
 
-            int doorSize = (int)Math.Ceiling((decimal)tileStep / 2);
+            int doorSize = 1;
             int startStep = (int)Math.Ceiling((decimal)doorSize / 2);
 
             // Loop for each corridor cell and expand it

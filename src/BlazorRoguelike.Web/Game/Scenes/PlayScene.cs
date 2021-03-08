@@ -22,7 +22,8 @@ namespace BlazorRoguelike.Web.Game.Scenes
 
         protected override async ValueTask EnterCore()
         {
-            var generator = new DungeonGenerator.DungeonGenerator(9, 7, 40, 40, 60, new DungeonGenerator.RoomGenerator(4, 2, 3, 2, 3)); 
+            var roomGenerator =  new DungeonGenerator.RoomGenerator(5, 2, 3, 2, 3);
+            var generator = new DungeonGenerator.DungeonGenerator(9, 7, 70, 25, 100, roomGenerator); 
             var dungeon = generator.Generate();
 
             var map = new GameObject();
@@ -31,7 +32,7 @@ namespace BlazorRoguelike.Web.Game.Scenes
 
             var renderer = map.Components.Add<MapRenderer>();
             renderer.Dungeon = dungeon;
-            renderer.Tileset = _assetsResolver.Get<SpriteSheet>("assets/tilesets/dungeon3.json");
+            renderer.Tileset = _assetsResolver.Get<SpriteSheet>("assets/tilesets/dungeon4.json");
 
             this.Root.AddChild(map);
 

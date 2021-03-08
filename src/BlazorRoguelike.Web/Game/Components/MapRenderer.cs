@@ -48,8 +48,10 @@ namespace BlazorRoguelike.Web.Game.Components
                     var cell = _cells[row, col];
 
                     var tile = Tileset.Get(_tileNames[cell]);
-                    if(tile is null)
+                    if(tile is null){
+                        Console.WriteLine(cell);
                         continue;
+                    }                        
 
                     await context.DrawImageAsync(tile.ElementRef,
                         tile.Bounds.X, tile.Bounds.Y, tile.Bounds.Width, tile.Bounds.Height,
@@ -69,7 +71,7 @@ namespace BlazorRoguelike.Web.Game.Components
             set
             {
                 _dungeon = value;
-                _cells = _dungeon.ExpandToTiles(3);
+                _cells = _dungeon.ExpandToTiles(4);
             }
         }
         public int TileWidth { get; set; } = 16;
