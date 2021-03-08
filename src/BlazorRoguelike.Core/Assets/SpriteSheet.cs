@@ -43,7 +43,7 @@ namespace BlazorRoguelike.Core.Assets
         public string Name { get; }
         public string ImagePath { get; }
 
-        public SpriteBase Get(string name)
+        public SpriteBase GetSprite(string name)
         {
             _sprites.TryGetValue(name, out var sprite);
             return sprite;
