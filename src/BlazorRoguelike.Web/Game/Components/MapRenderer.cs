@@ -5,11 +5,36 @@ using System.Threading.Tasks;
 using Blazor.Extensions.Canvas.Canvas2D;
 using BlazorRoguelike.Core;
 using BlazorRoguelike.Core.Components;
+using BlazorRoguelike.Core.GameServices;
 using BlazorRoguelike.Web.Game.DungeonGenerator;
 
 namespace BlazorRoguelike.Web.Game.Components
 {
-    public class MapRenderer : Component, IRenderable
+    public class MapRenderComponent : Component, IRenderable
+    {
+        private MapRenderComponent(GameObject owner) : base(owner)
+        {
+        }
+
+        public OffscreenMapRenderer Renderer;
+
+        public int LayerIndex {get;set;}
+        public bool Hidden {get;set;}
+
+        public bool NeedUpdate {get;set;} = true;
+
+        public async ValueTask Render(GameContext game, Canvas2DContext context)
+        {
+            if(this.NeedUpdate){
+                await this.Renderer.Render();
+               // this.NeedUpdate = false;
+            }
+
+            await context.DrawImageAsync(this.Renderer.Canvas.Canvas, 0, 0);
+        }
+    }
+
+    public class OffscreenMapRenderer 
     {
         private TileType[,] _cells;
 
@@ -32,20 +57,22 @@ namespace BlazorRoguelike.Web.Game.Components
             { TileType.Door, "door" }
         };
 
-        public MapRenderer(GameObject owner) : base(owner)
-        {
-        }
-
-        public async ValueTask Render(GameContext game, Canvas2DContext context)
+        public async ValueTask Render()
         {
             if (this.Dungeon is null)
                 return;
 
-            await context.SaveAsync();
+            int rows = _cells.GetLength(0),
+                cols = _cells.GetLength(1);
 
-            for (int row = 0; row < _cells.GetLength(0); row++)
+            await this.Canvas.ClearRectAsync(0, 0, TileWidth*rows, TileHeight*cols)
+                        .ConfigureAwait(false);
+
+            await this.Canvas.BeginBatchAsync().ConfigureAwait(false);
+
+            for (int row = 0; row < rows; row++)
             {
-                for (int col = 0; col < _cells.GetLength(1); col++)
+                for (int col = 0; col < cols; col++)
                 {
                     var cell = _cells[row, col];
 
@@ -53,19 +80,16 @@ namespace BlazorRoguelike.Web.Game.Components
                     if (tile is null)                    
                         continue;
                     
-                    await context.DrawImageAsync(tile.ElementRef,
+                    await this.Canvas.DrawImageAsync(tile.ElementRef,
                         tile.Bounds.X, tile.Bounds.Y, tile.Bounds.Width, tile.Bounds.Height,
                         row * TileWidth, col * TileHeight,
                         TileWidth, TileHeight).ConfigureAwait(false);
                 }
             }
 
-            await context.RestoreAsync();
+            await this.Canvas.EndBatchAsync().ConfigureAwait(false);
         }
-
-        public int LayerIndex { get; set; }
-        public bool Hidden { get; set; }
-
+      
         private Dungeon _dungeon;
         public Dungeon Dungeon
         {
@@ -78,6 +102,8 @@ namespace BlazorRoguelike.Web.Game.Components
         }
         public int TileWidth { get; set; } = 16;
         public int TileHeight { get; set; } = 16;
+
+        public Canvas2DContext Canvas { get; set; }
 
         public Core.Assets.SpriteSheet Tileset { get; set; }
     }

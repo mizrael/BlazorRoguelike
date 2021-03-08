@@ -19,6 +19,9 @@ namespace BlazorRoguelike.Core
         protected GameContext(Blazor.Extensions.BECanvasComponent canvas)
         {
             _canvas = canvas ?? throw new ArgumentNullException(nameof(canvas));
+
+            this.SceneManager = new SceneManager(this);
+            this.AddService(this.SceneManager);
         }
 
         public T GetService<T>() where T : class, IGameService
@@ -28,7 +31,7 @@ namespace BlazorRoguelike.Core
             return service as T;
         }
 
-        protected void AddService(IGameService service)
+        public void AddService(IGameService service)
         {
             if (service == null)
                 throw new ArgumentNullException(nameof(service));
@@ -63,9 +66,6 @@ namespace BlazorRoguelike.Core
 
         private async ValueTask InitServices()
         {
-            this.SceneManager = new SceneManager(this);
-            this.AddService(this.SceneManager);
-
             var context = await _canvas.CreateCanvas2DAsync();
             _renderService = new RenderService(this, context);
             this.AddService(_renderService);

@@ -11,22 +11,21 @@ namespace BlazorRoguelike.Web.Game
 
     public class BlazorRoguelikeGame : GameContext
     {
-        private readonly IAssetsResolver _assetsResolver;
-
-        public BlazorRoguelikeGame(BECanvasComponent canvas, 
+        public BlazorRoguelikeGame(BECanvasComponent canvas,
+                              BECanvasComponent mapCanvas,
                               IAssetsResolver assetsResolver,
                               ISoundService soundService) : base(canvas)
         {
-            _assetsResolver = assetsResolver;
-
             this.AddService(soundService);
+            this.AddService(new InputService());
+
+            var playScene = new Scenes.PlayScene(this, assetsResolver, mapCanvas);
+            this.SceneManager.AddScene(SceneNames.Play, playScene);
         }
 
         protected override async ValueTask Init()
         {
-            this.AddService(new InputService());
-
-            this.SceneManager.AddScene(SceneNames.Play, new Scenes.PlayScene(this, _assetsResolver));
+            
 
             await this.SceneManager.SetCurrentScene(SceneNames.Play);
         }

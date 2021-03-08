@@ -12,6 +12,9 @@
 
 <Assets Source="assets/assets.json" OnLoaded="@OnAssetsLoaded" />
 
+<div id="mapCanvasContainer" style="position: fixed; opacity: 1; background-color: black; width: 100%; height: 100%">
+    <BECanvas @ref="_mapCanvas"></BECanvas>
+</div>
 <div id="canvasContainer" style="position: fixed; opacity: 1; background-color: black; width: 100%; height: 100%">
     <BECanvas @ref="_canvas"></BECanvas>
 </div>
@@ -19,6 +22,7 @@
 @code
 {
     BECanvasComponent _canvas;
+    BECanvasComponent _mapCanvas;
     GameContext _game;
     InputService _inputService;
 
@@ -42,13 +46,10 @@
     private async ValueTask InitGame()
     {
         var instance = DotNetObjectReference.Create(this);
-        var canvasMeta = await JsRuntime.InvokeAsync<CanvasMeta>("initGame", instance);
-
-        _canvas.Height = canvasMeta.Height;
-        _canvas.Width = canvasMeta.Width;
+        var canvasMeta = await JsRuntime.InvokeAsync<CanvasMeta>("initGame", instance); 
 
         var soundService = new SoundService(JsRuntime);
-        _game = new BlazorRoguelikeGame(_canvas, AssetsResolver, soundService);
+        _game = new BlazorRoguelikeGame(_canvas, _mapCanvas, AssetsResolver, soundService);
 
         // this will make sure that the viewport is correctly initialized
         await JsRuntime.InvokeAsync<object>("onResize");

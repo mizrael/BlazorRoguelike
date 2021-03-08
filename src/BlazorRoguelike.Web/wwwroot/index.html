@@ -54,42 +54,45 @@
         }
 
         window.onResize = function () {
-            if (!window.game.canvas)
-                return;
-
-            game.canvas.width = window.innerWidth;
-            game.canvas.height = window.innerHeight;
+            if (game.canvas) {
+                game.canvas.width = window.innerWidth;
+                game.canvas.height = window.innerHeight;
+            }
+            if (game.mapCanvas) {
+                game.mapCanvas.width = window.innerWidth;
+                game.mapCanvas.height = window.innerHeight;
+            }
 
             game.instance.invokeMethodAsync('OnResize', game.canvas.width, game.canvas.height);
         }
 
         window.playSound = function (name, loop) {
-            //TODO: caching
-           // const audio = document.getElementById(name);
             const audio = window.game.sounds[name];
             audio.loop = loop;
-            //audio.load();
             audio.play();
         }
 
         window.initGame = (instance) => {
-            const loadSounds = () =>{
+            const loadSounds = () => {
                 const sounds = [...document.getElementsByTagName("audio") || []],
                     results = [];
-                sounds.forEach(sound =>{
+                sounds.forEach(sound => {
                     results[sound.id] = sound;
                 });
                 return results;
-            };
+            }, getCanvas = (containerId) =>{
+                const container =  document.getElementById(containerId),
+                    canvases = container.getElementsByTagName("canvas");
+                return (canvases && canvases.length) ? canvases[0] : null;
+            }
 
-            const canvasContainer = document.getElementById('canvasContainer'),
-                canvases = canvasContainer.getElementsByTagName('canvas') || [],
-                game = {
+            const game = {
                     instance: instance,
-                    canvas: canvases.length ? canvases[0] : null,
+                    canvas: getCanvas("canvasContainer"),
+                    mapCanvas: getCanvas("mapCanvasContainer"),
                     sounds: loadSounds()
                 };
-            window.game = game;            
+            window.game = game;
 
             if (window.game.canvas) {
                 window.onkeydown = (e) => {

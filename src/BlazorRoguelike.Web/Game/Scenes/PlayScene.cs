@@ -4,6 +4,7 @@ using BlazorRoguelike.Core.Components;
 using BlazorRoguelike.Core.GameServices;
 using System.Threading.Tasks;
 using BlazorRoguelike.Web.Game.Components;
+using Blazor.Extensions;
 
 namespace BlazorRoguelike.Web.Game.Scenes
 {
@@ -12,17 +13,20 @@ namespace BlazorRoguelike.Web.Game.Scenes
         #region "private members"
 
         private readonly IAssetsResolver _assetsResolver;
+        private readonly BECanvasComponent _mapCanvas;
 
         #endregion "private members"
 
-        public PlayScene(GameContext game, IAssetsResolver assetsResolver) : base(game)
+        public PlayScene(GameContext game, IAssetsResolver assetsResolver, BECanvasComponent mapCanvas) : base(game)
         {
             _assetsResolver = assetsResolver;
+            _mapCanvas = mapCanvas;
         }
 
         protected override async ValueTask EnterCore()
         {
-            InitDungeon();
+            await InitDungeon();
+
             InitCursor();
 
 #if DEBUG
@@ -54,20 +58,22 @@ namespace BlazorRoguelike.Web.Game.Scenes
             this.Root.AddChild(cursor);
         }
 
-        private void InitDungeon()
+        private async ValueTask InitDungeon()
         {
             var roomGenerator = new DungeonGenerator.RoomGenerator(5, 2, 3, 2, 3);
             var generator = new DungeonGenerator.DungeonGenerator(9, 7, 70, 25, 100, roomGenerator);
             var dungeon = generator.Generate();
 
+            var mapRenderer = new OffscreenMapRenderer();
+            mapRenderer.Canvas = await _mapCanvas.CreateCanvas2DAsync();
+            mapRenderer.Dungeon = dungeon;
+            mapRenderer.Tileset = _assetsResolver.Get<SpriteSheet>("assets/tilesets/dungeon4.json");
+
             var map = new GameObject();
-
             map.Components.Add<TransformComponent>();
-
-            var renderer = map.Components.Add<MapRenderer>();
-            renderer.Dungeon = dungeon;
-            renderer.Tileset = _assetsResolver.Get<SpriteSheet>("assets/tilesets/dungeon4.json");
-            renderer.LayerIndex = (int)RenderLayers.Background;
+            var renderComp = map.Components.Add<MapRenderComponent>();
+            renderComp.Renderer = mapRenderer;
+            renderComp.LayerIndex = (int)RenderLayers.Background;
 
             this.Root.AddChild(map);
         }
@@ -76,7 +82,7 @@ namespace BlazorRoguelike.Web.Game.Scenes
         {
             var ui = new GameObject();
 
-            var debugStats = ui.Components.Add<DebugStatsUIComponent>();            
+            var debugStats = ui.Components.Add<DebugStatsUIComponent>();
             debugStats.LayerIndex = (int)RenderLayers.UI;
 
             this.Root.AddChild(ui);
