@@ -12,7 +12,7 @@ namespace BlazorRoguelike.Web.Game.Components
     public class MapRenderer : Component, IRenderable
     {
         private TileType[,] _cells;
-      
+
         private Dictionary<TileType, string> _tileNames = new()
         {
             { TileType.Empty, "floor" }, //
@@ -41,24 +41,26 @@ namespace BlazorRoguelike.Web.Game.Components
             if (this.Dungeon is null)
                 return;
 
+            await context.SaveAsync();
+
             for (int row = 0; row < _cells.GetLength(0); row++)
             {
                 for (int col = 0; col < _cells.GetLength(1); col++)
                 {
                     var cell = _cells[row, col];
 
-                    var tile = Tileset.Get(_tileNames[cell]);
-                    if(tile is null){
-                        Console.WriteLine(cell);
+                    var tile = Tileset.GetSprite(_tileNames[cell]);
+                    if (tile is null)                    
                         continue;
-                    }                        
-
+                    
                     await context.DrawImageAsync(tile.ElementRef,
                         tile.Bounds.X, tile.Bounds.Y, tile.Bounds.Width, tile.Bounds.Height,
                         row * TileWidth, col * TileHeight,
-                        TileWidth, TileHeight);
+                        TileWidth, TileHeight).ConfigureAwait(false);
                 }
             }
+
+            await context.RestoreAsync();
         }
 
         public int LayerIndex { get; set; }
