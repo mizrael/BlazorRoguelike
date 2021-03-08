@@ -5,7 +5,7 @@
             "name": "Launch game",
             "type": "blazorwasm",
             "request": "launch",
-            "cwd": "${workspaceFolder}/Blazeroids.Web"
+            "cwd": "${workspaceFolder}/BlazorRoguelike.Web"
         }
     ]
 }

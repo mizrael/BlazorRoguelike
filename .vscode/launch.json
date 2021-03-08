@@ -9,7 +9,7 @@
             "type": "blazorwasm",
             "request": "launch",
             "preLaunchTask": "build",
-            "cwd": "${workspaceFolder}/src/Blazeroids.Web",            
+            "cwd": "${workspaceFolder}/src/BlazorRoguelike.Web",            
            
             "serverReadyAction": {
                 "action": "openExternally",

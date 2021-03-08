@@ -1,5 +1,5 @@
-solutionName="Blazeroids"
-projectName="Blazeroids.Web"
+solutionName="BlazorRoguelike"
+projectName="BlazorRoguelike.Web"
 projectFile="src/$projectName/$projectName.csproj"
 
 rm -rf ./build
