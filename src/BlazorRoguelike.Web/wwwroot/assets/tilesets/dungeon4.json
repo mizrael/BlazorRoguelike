@@ -2,6 +2,13 @@
   "imagePath": "assets/tilesets/dungeon4.png",
   "sprites": [
     {
+      "name": "cursor",
+      "x": "612",
+      "y": "204",
+      "width": "16",
+      "height": "16"
+    },
+    {
       "name": "floor",
       "x": "272",
       "y": "0",

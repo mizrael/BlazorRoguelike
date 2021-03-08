@@ -89,18 +89,19 @@
                     canvas: canvases.length ? canvases[0] : null,
                     sounds: loadSounds()
                 };
-            window.game = game;
-
-            
+            window.game = game;            
 
             if (window.game.canvas) {
-                window.game.canvas.onkeydown = (e) => {
+                window.onkeydown = (e) => {
                     game.instance.invokeMethodAsync('OnKeyDown', e.keyCode);
                 };
-                window.game.canvas.onkeyup = (e) => {
+                window.onkeyup = (e) => {
                     game.instance.invokeMethodAsync('OnKeyUp', e.keyCode);
                 };
-                window.game.canvas.onblur = (e) => {
+                window.onmousemove = (e) => {
+                    game.instance.invokeMethodAsync('OnMouseMove', e.offsetX, e.offsetY);
+                };
+                window.onblur = (e) => {
                     window.game.canvas.focus();
                 };
                 window.game.canvas.tabIndex = 0;
