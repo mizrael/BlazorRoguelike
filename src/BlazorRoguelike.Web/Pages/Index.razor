@@ -44,7 +44,7 @@
     private async ValueTask InitGame()
     {
         var instance = DotNetObjectReference.Create(this);
-        var canvasMeta = await JsRuntime.InvokeAsync<CanvasMeta>("initGame", instance); 
+        await JsRuntime.InvokeAsync<object>("initGame", instance); 
 
         var soundService = new SoundService(JsRuntime);
         _game = new BlazorRoguelikeGame(_canvas, _mapCanvas, AssetsResolver, soundService);
@@ -82,9 +82,4 @@
     public async ValueTask OnMouseMove(int x, int y) =>
         _inputService.Mouse.SetPosition(x, y);
 
-    public class CanvasMeta
-    {
-        public int Width { get; set; }
-        public int Height { get; set; }
-    }
 }
