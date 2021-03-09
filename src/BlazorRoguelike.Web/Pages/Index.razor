@@ -12,10 +12,14 @@
 
 <Assets Source="assets/assets.json" OnLoaded="@OnAssetsLoaded" />
 
-<div id="mapCanvasContainer" style="position: fixed; opacity: 1; background-color: black; width: 100%; height: 100%">
+@if(!_assetsLoaded){
+    <div class="preloading"><span>Loading assets...</span></div>
+}
+
+<div id="mapCanvasContainer" class="canvasContainer">
     <BECanvas @ref="_mapCanvas"></BECanvas>
 </div>
-<div id="canvasContainer" style="position: fixed; opacity: 1; background-color: black; width: 100%; height: 100%">
+<div id="canvasContainer" class="canvasContainer">
     <BECanvas @ref="_canvas"></BECanvas>
 </div>
 
@@ -29,18 +33,12 @@
     bool _assetsLoaded = false;
     bool _initialized = false;
 
-    protected void OnAssetsLoaded()
-    {
+    protected async Task OnAssetsLoaded(){
         _assetsLoaded = true;
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!_initialized && _assetsLoaded)
-        {
-            await InitGame();
+        if(!_initialized){
+            await InitGame();       
             _initialized = true;
-        }
+        }             
     }
 
     private async ValueTask InitGame()

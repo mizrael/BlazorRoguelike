@@ -1,12 +1,34 @@
-﻿html, body {
+﻿html,
+body {
     margin: 0;
 }
 
-#canvasContainer{
-    z-index: 1;
+.preloading{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    text-align: center;    
+    z-index: 1000;
 }
 
-#sounds{
-    position:fixed;
+.preloading span{
+    display: inline-block;    
+    color: #fff;
+    font-size: 2rem;
+    position: relative;
+    top: 50%;
+}
+
+.canvasContainer {
+    z-index: 1;
+    position: fixed;
+    opacity: 1;
+    background-color: black;
+    width: 100%;
+    height: 100%
+}
+
+#sounds {
+    position: fixed;
     z-index: 2;
 }
