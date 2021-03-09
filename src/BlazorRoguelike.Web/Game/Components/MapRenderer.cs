@@ -1,11 +1,8 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Blazor.Extensions.Canvas.Canvas2D;
 using BlazorRoguelike.Core;
 using BlazorRoguelike.Core.Components;
-using BlazorRoguelike.Core.GameServices;
 using BlazorRoguelike.Web.Game.DungeonGenerator;
 
 namespace BlazorRoguelike.Web.Game.Components
@@ -18,25 +15,26 @@ namespace BlazorRoguelike.Web.Game.Components
 
         public OffscreenMapRenderer Renderer;
 
-        public int LayerIndex {get;set;}
-        public bool Hidden {get;set;}
-
-        public bool NeedUpdate {get;set;} = true;
+        public int LayerIndex { get; set; }
+        public bool Hidden { get; set; }
 
         public async ValueTask Render(GameContext game, Canvas2DContext context)
         {
-            if(this.NeedUpdate){
-                await this.Renderer.Render();
-               // this.NeedUpdate = false;
-            }
+            await this.Renderer.Render();
 
             await context.DrawImageAsync(this.Renderer.Canvas.Canvas, 0, 0);
         }
     }
 
-    public class OffscreenMapRenderer 
+    public class OffscreenMapRenderer
     {
+        private Dungeon _dungeon;
         private TileType[,] _cells;
+        private int _tileWidth = 16;
+        private int _tileHeigth = 16;
+        private Core.Assets.SpriteSheet _tileset;
+        private Canvas2DContext _canvas;
+        private bool _canRender = true;
 
         private Dictionary<TileType, string> _tileNames = new()
         {
@@ -59,13 +57,15 @@ namespace BlazorRoguelike.Web.Game.Components
 
         public async ValueTask Render()
         {
-            if (this.Dungeon is null)
+            if (_cells is null || !_canRender)
                 return;
+
+            _canRender = false;
 
             int rows = _cells.GetLength(0),
                 cols = _cells.GetLength(1);
 
-            await this.Canvas.ClearRectAsync(0, 0, TileWidth*rows, TileHeight*cols)
+            await this.Canvas.ClearRectAsync(0, 0, TileWidth * rows, TileHeight * cols)
                         .ConfigureAwait(false);
 
             await this.Canvas.BeginBatchAsync().ConfigureAwait(false);
@@ -77,9 +77,9 @@ namespace BlazorRoguelike.Web.Game.Components
                     var cell = _cells[row, col];
 
                     var tile = Tileset.GetSprite(_tileNames[cell]);
-                    if (tile is null)                    
+                    if (tile is null)
                         continue;
-                    
+
                     await this.Canvas.DrawImageAsync(tile.ElementRef,
                         tile.Bounds.X, tile.Bounds.Y, tile.Bounds.Width, tile.Bounds.Height,
                         row * TileWidth, col * TileHeight,
@@ -89,8 +89,9 @@ namespace BlazorRoguelike.Web.Game.Components
 
             await this.Canvas.EndBatchAsync().ConfigureAwait(false);
         }
-      
-        private Dungeon _dungeon;
+
+        public void ForceRendering() => _canRender = true;
+
         public Dungeon Dungeon
         {
             get => _dungeon;
@@ -98,13 +99,46 @@ namespace BlazorRoguelike.Web.Game.Components
             {
                 _dungeon = value;
                 _cells = _dungeon.ExpandToTiles(4);
+                _canRender = true;
             }
         }
-        public int TileWidth { get; set; } = 16;
-        public int TileHeight { get; set; } = 16;
+        public int TileWidth
+        {
+            get => _tileWidth;
+            set
+            {
+                _tileWidth = value;
+                _canRender = true;
+            }
+        }
+        public int TileHeight
+        {
+            get => _tileHeigth;
+            set
+            {
+                _tileHeigth = value;
+                _canRender = true;
+            }
+        }
 
-        public Canvas2DContext Canvas { get; set; }
+        public Canvas2DContext Canvas
+        {
+            get => _canvas;
+            set
+            {
+                _canvas = value;
+                _canRender = true;
+            }
+        }
 
-        public Core.Assets.SpriteSheet Tileset { get; set; }
+        public Core.Assets.SpriteSheet Tileset
+        {
+            get => _tileset;
+            set
+            {
+                _tileset = value;
+                _canRender = true;
+            }
+        }
     }
 }

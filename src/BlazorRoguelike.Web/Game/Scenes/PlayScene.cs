@@ -3,8 +3,8 @@ using BlazorRoguelike.Core.Assets;
 using BlazorRoguelike.Core.Components;
 using BlazorRoguelike.Core.GameServices;
 using System.Threading.Tasks;
-using BlazorRoguelike.Web.Game.Components;
 using Blazor.Extensions;
+using BlazorRoguelike.Web.Game.Components;
 
 namespace BlazorRoguelike.Web.Game.Scenes
 {
@@ -74,6 +74,10 @@ namespace BlazorRoguelike.Web.Game.Scenes
             var renderComp = map.Components.Add<MapRenderComponent>();
             renderComp.Renderer = mapRenderer;
             renderComp.LayerIndex = (int)RenderLayers.Background;
+
+            this.Game.Display.OnSizeChanged += () =>{
+                mapRenderer.ForceRendering();
+            };
 
             this.Root.AddChild(map);
         }

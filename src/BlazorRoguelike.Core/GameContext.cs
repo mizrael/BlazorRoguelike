@@ -46,7 +46,7 @@ namespace BlazorRoguelike.Core
         {
             if (!_isInitialized)
             {
-                await this.InitServices();
+                await this.InitRenderer();
                 await this.Init();
 
                 this.GameTime.Start();
@@ -64,7 +64,7 @@ namespace BlazorRoguelike.Core
             await _renderService.Render();
         }
 
-        private async ValueTask InitServices()
+        private async ValueTask InitRenderer()
         {
             var context = await _canvas.CreateCanvas2DAsync();
             _renderService = new RenderService(this, context);
