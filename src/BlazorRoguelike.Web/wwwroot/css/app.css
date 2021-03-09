@@ -28,6 +28,10 @@ body {
     height: 100%
 }
 
+.canvasContainer.primary{
+    z-index: 100;
+}
+
 #sounds {
     position: fixed;
     z-index: 2;

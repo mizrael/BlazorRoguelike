@@ -49,16 +49,13 @@
 
     <script>
         window.onResize = function () {
-            if (game.canvas) {
-                game.canvas.width = window.innerWidth;
-                game.canvas.height = window.innerHeight;
-            }
-            if (game.mapCanvas) {
-                game.mapCanvas.width = window.innerWidth;
-                game.mapCanvas.height = window.innerHeight;
-            }
+            const canvases = [...document.getElementsByTagName('canvas') || []];
+            canvases.forEach(c => {
+                c.width = window.innerWidth;
+                c.height = window.innerHeight;
+            });
 
-            game.instance.invokeMethodAsync('OnResize', game.canvas.width, game.canvas.height);
+            game.instance.invokeMethodAsync('OnResize', window.innerWidth, window.innerHeight);
         }
 
         window.playSound = function (name, loop) {
@@ -75,44 +72,34 @@
                     results[sound.id] = sound;
                 });
                 return results;
-            }, getCanvas = (containerId) => {
-                const container = document.getElementById(containerId),
-                    canvases = container.getElementsByTagName("canvas");
-                return (canvases && canvases.length) ? canvases[0] : null;
-            }, gameLoop = (timeStamp) => {
-                window.requestAnimationFrame(gameLoop);
-                game.instance.invokeMethodAsync('GameLoop');
             };
 
             const game = {
                 instance: instance,
-                canvas: getCanvas("canvasContainer"),
-                mapCanvas: getCanvas("mapCanvasContainer"),
                 sounds: loadSounds()
             };
             window.game = game;
 
-            if (window.game.canvas) {
-                window.onkeydown = (e) => {
-                    game.instance.invokeMethodAsync('OnKeyDown', e.keyCode);
-                };
-                window.onkeyup = (e) => {
-                    game.instance.invokeMethodAsync('OnKeyUp', e.keyCode);
-                };
-                window.onmousemove = (e) => {
-                    game.instance.invokeMethodAsync('OnMouseMove', e.offsetX, e.offsetY);
-                };
-                window.onblur = (e) => {
-                    window.game.canvas.focus();
-                };
-                window.game.canvas.tabIndex = 0;
-                window.game.canvas.focus();
-            }
+            window.onkeydown = (e) => {
+                game.instance.invokeMethodAsync('OnKeyDown', e.keyCode);
+            };
+            window.onkeyup = (e) => {
+                game.instance.invokeMethodAsync('OnKeyUp', e.keyCode);
+            };
+            window.onmousemove = (e) => {
+                game.instance.invokeMethodAsync('OnMouseMove', e.offsetX, e.offsetY);
+            };
 
-            onResize();
             window.addEventListener("resize", onResize);
+        };
 
+        window.startGame = () => {
+            const gameLoop = (timeStamp) => {
+                window.requestAnimationFrame(gameLoop);
+                game.instance.invokeMethodAsync('GameLoop');
+            };
             window.requestAnimationFrame(gameLoop);
+            onResize();
         };
     </script>
 </body>

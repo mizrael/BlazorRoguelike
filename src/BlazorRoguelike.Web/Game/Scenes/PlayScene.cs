@@ -5,6 +5,7 @@ using BlazorRoguelike.Core.GameServices;
 using System.Threading.Tasks;
 using Blazor.Extensions;
 using BlazorRoguelike.Web.Game.Components;
+using BlazorRoguelike.Core.Web.Components;
 
 namespace BlazorRoguelike.Web.Game.Scenes
 {
@@ -13,14 +14,12 @@ namespace BlazorRoguelike.Web.Game.Scenes
         #region "private members"
 
         private readonly IAssetsResolver _assetsResolver;
-        private readonly BECanvasComponent _mapCanvas;
 
         #endregion "private members"
 
-        public PlayScene(GameContext game, IAssetsResolver assetsResolver, BECanvasComponent mapCanvas) : base(game)
+        public PlayScene(GameContext game, IAssetsResolver assetsResolver) : base(game)
         {
             _assetsResolver = assetsResolver;
-            _mapCanvas = mapCanvas;
         }
 
         protected override async ValueTask EnterCore()
@@ -65,7 +64,9 @@ namespace BlazorRoguelike.Web.Game.Scenes
             var dungeon = generator.Generate();
 
             var mapRenderer = new OffscreenMapRenderer();
-            mapRenderer.Canvas = await _mapCanvas.CreateCanvas2DAsync();
+            this.Game.Display.CanvasManager.CreateCanvas("map", CanvasOptions.Offscreen);
+            var canvas = this.Game.Display.CanvasManager.GetCanvas("map");            
+            mapRenderer.Canvas = await canvas.CreateCanvas2DAsync();
             mapRenderer.Dungeon = dungeon;
             mapRenderer.Tileset = _assetsResolver.Get<SpriteSheet>("assets/tilesets/dungeon4.json");
 

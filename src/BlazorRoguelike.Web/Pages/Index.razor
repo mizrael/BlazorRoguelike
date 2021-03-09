@@ -16,17 +16,11 @@
     <div class="preloading"><span>Loading assets...</span></div>
 }
 
-<div id="mapCanvasContainer" class="canvasContainer">
-    <BECanvas @ref="_mapCanvas"></BECanvas>
-</div>
-<div id="canvasContainer" class="canvasContainer">
-    <BECanvas @ref="_canvas"></BECanvas>
-</div>
+<CanvasManager @ref="_canvasManager"></CanvasManager>
 
 @code
 {
-    BECanvasComponent _canvas;
-    BECanvasComponent _mapCanvas;
+    CanvasManager _canvasManager;
     GameContext _game;
     InputService _inputService;
 
@@ -43,14 +37,14 @@
 
     private async ValueTask InitGame()
     {
+        
         var instance = DotNetObjectReference.Create(this);
         await JsRuntime.InvokeAsync<object>("initGame", instance); 
 
         var soundService = new SoundService(JsRuntime);
-        _game = new BlazorRoguelikeGame(_canvas, _mapCanvas, AssetsResolver, soundService);
+        _game = new BlazorRoguelikeGame(_canvasManager, AssetsResolver, soundService);
 
-        // this will make sure that the viewport is correctly initialized
-        await JsRuntime.InvokeAsync<object>("onResize");
+        await JsRuntime.InvokeAsync<object>("startGame");              
     }
 
     [JSInvokable]

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using BlazorRoguelike.Core.GameServices;
 using Blazor.Extensions;
+using BlazorRoguelike.Core.Web.Components;
 
 namespace BlazorRoguelike.Core
 {
@@ -14,11 +15,10 @@ namespace BlazorRoguelike.Core
         private List<IGameService> _services = new();
 
         private RenderService _renderService;
-        private readonly BECanvasComponent _canvas;
 
-        protected GameContext(Blazor.Extensions.BECanvasComponent canvas)
+        protected GameContext(CanvasManagerBase canvasManager)
         {
-            _canvas = canvas ?? throw new ArgumentNullException(nameof(canvas));
+            this.Display = new Display(canvasManager);
 
             this.SceneManager = new SceneManager(this);
             this.AddService(this.SceneManager);
@@ -66,7 +66,9 @@ namespace BlazorRoguelike.Core
 
         private async ValueTask InitRenderer()
         {
-            var context = await _canvas.CreateCanvas2DAsync();
+            this.Display.CanvasManager.CreateCanvas("main");
+            var canvas = this.Display.CanvasManager.GetCanvas("main");
+            var context = await canvas.CreateCanvas2DAsync();
             _renderService = new RenderService(this, context);
             this.AddService(_renderService);
         }
@@ -75,9 +77,7 @@ namespace BlazorRoguelike.Core
         protected virtual ValueTask Update() => ValueTask.CompletedTask;
 
         public GameTime GameTime { get; } = new();
-        public Display Display { get; } = new();
-
-        public SceneManager SceneManager { get; private set;}
-
+        public Display Display { get; }
+        public SceneManager SceneManager { get; private set; }
     }
 }

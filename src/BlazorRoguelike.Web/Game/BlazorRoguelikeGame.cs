@@ -5,21 +5,20 @@ using BlazorRoguelike.Core.Assets;
 using BlazorRoguelike.Core.GameServices;
 using BlazorRoguelike.Web.Game.GameServices;
 using Blazor.Extensions;
+using BlazorRoguelike.Web.Shared;
+using BlazorRoguelike.Core.Web.Components;
 
 namespace BlazorRoguelike.Web.Game
 {
 
     public class BlazorRoguelikeGame : GameContext
     {
-        private readonly BECanvasComponent _mapCanvas;
         private readonly IAssetsResolver _assetsResolver;
-
-        public BlazorRoguelikeGame(BECanvasComponent canvas,
-                              BECanvasComponent mapCanvas,
+                
+        public BlazorRoguelikeGame(CanvasManagerBase canvasManager,
                               IAssetsResolver assetsResolver,
-                              ISoundService soundService) : base(canvas)
-        {
-            _mapCanvas = mapCanvas;
+                              ISoundService soundService) : base(canvasManager)
+        {            
             _assetsResolver = assetsResolver;
             this.AddService(soundService);
             this.AddService(new InputService());
@@ -27,7 +26,7 @@ namespace BlazorRoguelike.Web.Game
 
         protected override async ValueTask Init()
         {
-            var playScene = new Scenes.PlayScene(this, _assetsResolver, _mapCanvas);
+            var playScene = new Scenes.PlayScene(this, _assetsResolver);
             this.SceneManager.AddScene(SceneNames.Play, playScene);
 
             await this.SceneManager.SetCurrentScene(SceneNames.Play);
