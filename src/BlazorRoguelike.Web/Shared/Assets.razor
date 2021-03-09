@@ -1,13 +1,15 @@
-﻿@using Microsoft.Extensions.Logging
-@using BlazorRoguelike.Core.Assets
-@inject HttpClient Http
-@inject ILogger<Assets> Logger
-@inject IAssetsResolver AssetsResolver
+﻿@inject HttpClient Http
+@inject Core.Assets.IAssetsResolver AssetsResolver
 
 <div class="assets" hidden>
-    @foreach (var item in _items)
+    @foreach (var (asset, meta) in _items)
     {
-        @_renderers[item.Item1.GetType()](item.Item1, item.Item2)
+        switch(asset){
+            case Core.Assets.SpriteSheet spriteSheet:
+                <SpriteSheet Source="@spriteSheet" OnLoaded="@OnAssetLoaded" />
+                break;
+        }
+        //@_renderers[item.Item1.GetType()](item.Item1, item.Item2)
     }
 </div>
 
@@ -18,30 +20,32 @@
     [Parameter]
     public EventCallback OnLoaded { get; set; }
 
-    private readonly List<(IAsset asset, AssetMeta data)> _items = new ();
+    private int _assetsToLoad;
 
-    private readonly Dictionary<Type, Func<IAsset, AssetMeta, RenderFragment>> _renderers = new Dictionary<Type, Func<IAsset, AssetMeta, RenderFragment>>()
+    private readonly List<(Core.Assets.IAsset asset, Core.Assets.AssetMeta data)> _items = new ();
+
+    private readonly Dictionary<Type, Func<Core.Assets.IAsset, Core.Assets.AssetMeta, RenderFragment>> _renderers = new ()
     {
         {
-            typeof(Sprite), (a, d) => {
-                var sprite = a as Sprite;
-                return @<img name="@sprite.ElementRef.Id" @ref="sprite.ElementRef" src="@sprite.ImagePath" hidden />;
+            typeof(Core.Assets.Sprite), (a, d) => {
+                var sprite = a as Core.Assets.Sprite;
+                return @<Sprite Source="@sprite" @OnLoaded="OnAssetLoaded" />;
             }
         },
         {
-            typeof(SpriteSheet), (a, d) =>
+            typeof(Core.Assets.SpriteSheet), (a, d) =>
             {
-                var spriteSheet = a as SpriteSheet;
+                var spriteSheet = a as Core.Assets.SpriteSheet;
                 
-                return @<img name="@spriteSheet.ElementRef.Id" @ref="spriteSheet.ElementRef" src="@spriteSheet.ImagePath" hidden />;
+                return @<SpriteSheet Source="@spriteSheet" OnLoaded="@(() =>{})" />;
             }
         },
         {
-            typeof(AnimationCollection), (a, d) =>
+            typeof(Core.Assets.AnimationCollection), (a, d) =>
             {
-                var animColl = a as AnimationCollection;
+                var animColl = a as Core.Assets.AnimationCollection;
 
-                return @<Animations Source="@animColl" />;                 
+                return @<Animations Source="@animColl" @OnLoaded="OnAssetLoaded" />;                 
             }
         },
         {
@@ -49,32 +53,42 @@
             {
                 var sound = a as Core.Assets.Sound;
 
-                return @<Sound Source="@sound" />;                 
+                return @<Sound Source="@sound" @OnLoaded="OnAssetLoaded" />;                 
             }
         }
     };
 
     protected override async Task OnInitializedAsync()
     {
-        var items = await Http.GetFromJsonAsync<AssetMeta[]>(this.Source);
+        var items = await Http.GetFromJsonAsync<Core.Assets.AssetMeta[]>(this.Source);
+
+        _assetsToLoad = items.Length;
+
         var tasks = items.Select(Load).ToArray();
         await Task.WhenAll(tasks);
 
         await this.OnLoaded.InvokeAsync(this);
     }
 
-    private async Task Load(AssetMeta item){
-        IAsset asset = null;
+    private async Task Load(Core.Assets.AssetMeta item){
+        Core.Assets.IAsset asset = null;
         if (item.Type == "sprite")
-            asset = await this.AssetsResolver.Load<Sprite>(item);
+            asset = await this.AssetsResolver.Load<Core.Assets.Sprite>(item);
         else if (item.Type == "spritesheet")
-            asset = await this.AssetsResolver.Load<SpriteSheet>(item);
+            asset = await this.AssetsResolver.Load<Core.Assets.SpriteSheet>(item);
         else if (item.Type == "animations")
-            asset = await this.AssetsResolver.Load<AnimationCollection>(item);
+            asset = await this.AssetsResolver.Load<Core.Assets.AnimationCollection>(item);
         else if (item.Type == "sound")
             asset = await this.AssetsResolver.Load<Core.Assets.Sound>(item);
 
         if (null != asset)
             _items.Add(new (asset, item));
+    }
+
+    private async ValueTask OnAssetLoaded(){
+        _assetsToLoad--;
+        Console.WriteLine(_assetsToLoad);
+        if(_assetsToLoad < 1)
+            await this.OnLoaded.InvokeAsync(this);
     }
 }

@@ -59,6 +59,7 @@ namespace BlazorRoguelike.Web.Game.Components
         {
             if (_cells is null || !_canRender)
                 return;
+                System.Console.WriteLine("map");
 
             _canRender = false;
 

@@ -26,6 +26,8 @@ namespace BlazorRoguelike.Core.GameServices
 
         private async ValueTask RenderFrame(SortedList<int, IList<IRenderable>> layers)
         {
+            System.Console.WriteLine("frame");
+
             await _context.ClearRectAsync(0, 0, _game.Display.Size.Width, _game.Display.Size.Height)
                         .ConfigureAwait(false);
 

@@ -75,7 +75,8 @@ namespace BlazorRoguelike.Web.Game.Scenes
             renderComp.Renderer = mapRenderer;
             renderComp.LayerIndex = (int)RenderLayers.Background;
 
-            this.Game.Display.OnSizeChanged += () =>{
+            this.Game.Display.OnSizeChanged += () =>
+            {
                 mapRenderer.ForceRendering();
             };
 
