@@ -5,11 +5,19 @@
     @foreach (var (asset, meta) in _items)
     {
         switch(asset){
-            case Core.Assets.SpriteSheet spriteSheet:
-                <SpriteSheet Source="@spriteSheet" OnLoaded="@OnAssetLoaded" />
+            case Core.Assets.Sprite:
+                <Sprite Source="@(asset as Core.Assets.Sprite)" OnLoaded="@OnAssetLoaded" />
+                break;
+            case Core.Assets.SpriteSheet:
+                <SpriteSheet Source="@(asset as Core.Assets.SpriteSheet)" OnLoaded="@OnAssetLoaded" />
+                break;
+            case Core.Assets.AnimationCollection:
+                <Animations Source="@(asset as Core.Assets.AnimationCollection)" OnLoaded="@OnAssetLoaded" />
+                break;
+            case Core.Assets.Sound:
+                <Sound Source="@(asset as Core.Assets.Sound)" OnLoaded="@OnAssetLoaded" />
                 break;
         }
-        //@_renderers[item.Item1.GetType()](item.Item1, item.Item2)
     }
 </div>
 
@@ -24,40 +32,6 @@
 
     private readonly List<(Core.Assets.IAsset asset, Core.Assets.AssetMeta data)> _items = new ();
 
-    private readonly Dictionary<Type, Func<Core.Assets.IAsset, Core.Assets.AssetMeta, RenderFragment>> _renderers = new ()
-    {
-        {
-            typeof(Core.Assets.Sprite), (a, d) => {
-                var sprite = a as Core.Assets.Sprite;
-                return @<Sprite Source="@sprite" @OnLoaded="OnAssetLoaded" />;
-            }
-        },
-        {
-            typeof(Core.Assets.SpriteSheet), (a, d) =>
-            {
-                var spriteSheet = a as Core.Assets.SpriteSheet;
-                
-                return @<SpriteSheet Source="@spriteSheet" OnLoaded="@(() =>{})" />;
-            }
-        },
-        {
-            typeof(Core.Assets.AnimationCollection), (a, d) =>
-            {
-                var animColl = a as Core.Assets.AnimationCollection;
-
-                return @<Animations Source="@animColl" @OnLoaded="OnAssetLoaded" />;                 
-            }
-        },
-        {
-            typeof(Core.Assets.Sound), (a, d) =>
-            {
-                var sound = a as Core.Assets.Sound;
-
-                return @<Sound Source="@sound" @OnLoaded="OnAssetLoaded" />;                 
-            }
-        }
-    };
-
     protected override async Task OnInitializedAsync()
     {
         var items = await Http.GetFromJsonAsync<Core.Assets.AssetMeta[]>(this.Source);
@@ -65,9 +39,7 @@
         _assetsToLoad = items.Length;
 
         var tasks = items.Select(Load).ToArray();
-        await Task.WhenAll(tasks);
-
-        await this.OnLoaded.InvokeAsync(this);
+        await Task.WhenAll(tasks);        
     }
 
     private async Task Load(Core.Assets.AssetMeta item){
@@ -85,9 +57,8 @@
             _items.Add(new (asset, item));
     }
 
-    private async ValueTask OnAssetLoaded(){
+    private async Task OnAssetLoaded(){
         _assetsToLoad--;
-        Console.WriteLine(_assetsToLoad);
         if(_assetsToLoad < 1)
             await this.OnLoaded.InvokeAsync(this);
     }
