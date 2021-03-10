@@ -28,8 +28,7 @@ namespace BlazorRoguelike.Web.Game.Components
 
     public class OffscreenMapRenderer
     {
-        private Dungeon _dungeon;
-        private TileType[,] _cells;
+        private Game.Scenes.Map _map;
         private int _tileWidth = 16;
         private int _tileHeigth = 16;
         private Core.Assets.SpriteSheet _tileset;
@@ -57,24 +56,21 @@ namespace BlazorRoguelike.Web.Game.Components
 
         public async ValueTask Render()
         {
-            if (_cells is null || !_canRender)
+            if (_map is null || !_canRender)
                 return;
         
             _canRender = false;
-
-            int rows = _cells.GetLength(0),
-                cols = _cells.GetLength(1);
-
-            await this.Canvas.ClearRectAsync(0, 0, TileWidth * rows, TileHeight * cols)
+          
+            await this.Canvas.ClearRectAsync(0, 0, TileWidth * _map.Rows, TileHeight * _map.Cols)
                         .ConfigureAwait(false);
 
             await this.Canvas.BeginBatchAsync().ConfigureAwait(false);
 
-            for (int row = 0; row < rows; row++)
+            for (int row = 0; row < _map.Rows; row++)
             {
-                for (int col = 0; col < cols; col++)
+                for (int col = 0; col < _map.Cols; col++)
                 {
-                    var cell = _cells[row, col];
+                    var cell = _map.GetCellAt(row, col);
 
                     var tile = Tileset.GetSprite(_tileNames[cell]);
                     if (tile is null)
@@ -92,13 +88,12 @@ namespace BlazorRoguelike.Web.Game.Components
 
         public void ForceRendering() => _canRender = true;
 
-        public Dungeon Dungeon
+        public Game.Scenes.Map Map
         {
-            get => _dungeon;
+            get => _map;
             set
             {
-                _dungeon = value;
-                _cells = _dungeon.ExpandToTiles(4);
+                _map = value;                
                 _canRender = true;
             }
         }
@@ -120,7 +115,6 @@ namespace BlazorRoguelike.Web.Game.Components
                 _canRender = true;
             }
         }
-
         public Canvas2DContext Canvas
         {
             get => _canvas;

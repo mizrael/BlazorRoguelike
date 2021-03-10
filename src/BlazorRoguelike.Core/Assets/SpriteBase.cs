@@ -1,3 +1,4 @@
+using System;
 using System.Drawing;
 using Microsoft.AspNetCore.Components;
 
@@ -10,7 +11,9 @@ namespace BlazorRoguelike.Core.Assets
             Name = name;
             ElementRef = elementRef;
             Bounds = bounds;
-            Origin = new Point(bounds.Width / 2, bounds.Height / 2);
+
+            Origin = new Point((int)MathF.Floor((float)bounds.Width * .5f),
+                                (int)MathF.Floor((float)bounds.Height * .5f));
         }
 
         public string Name { get; }

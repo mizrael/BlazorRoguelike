@@ -3,8 +3,15 @@
   "sprites": [
     {
       "name": "cursor",
-      "x": "612",
+      "x": "629",
       "y": "204",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "cursor-x",
+      "x": "681",
+      "y": "222",
       "width": "16",
       "height": "16"
     },

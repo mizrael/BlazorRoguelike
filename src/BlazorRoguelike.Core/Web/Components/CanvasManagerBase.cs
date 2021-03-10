@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using Blazor.Extensions;
 using Microsoft.AspNetCore.Components;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace BlazorRoguelike.Core.Web.Components
