@@ -16,7 +16,7 @@
     <div class="preloading"><span>Loading assets...</span></div>
 }
 
-<CanvasManager @ref="_canvasManager"></CanvasManager>
+<CanvasManager @ref="_canvasManager" OnCanvasAdded="@OnCanvasAdded" />
 
 @code
 {
@@ -27,7 +27,7 @@
     bool _assetsLoaded = false;
     bool _initialized = false;
 
-    protected async Task OnAssetsLoaded(){
+    private async Task OnAssetsLoaded(){
         _assetsLoaded = true;
         if(!_initialized){
             await InitGame();       
@@ -35,9 +35,12 @@
         }             
     }
 
+    private async Task OnCanvasAdded(){
+        await JsRuntime.InvokeAsync<object>("onResize");              
+    }
+
     private async ValueTask InitGame()
-    {
-        
+    {   
         var instance = DotNetObjectReference.Create(this);
         await JsRuntime.InvokeAsync<object>("initGame", instance); 
 
@@ -58,22 +61,22 @@
     }
 
     [JSInvokable]
-    public async ValueTask OnResize(int screenWidth, int screenHeight)
+    public void OnResize(int screenWidth, int screenHeight)
     {
         if (null == _game) return;
         _game.Display.Size = new Size(screenWidth, screenHeight);
     }
 
     [JSInvokable]
-    public async ValueTask OnKeyDown(int keyCode) =>
+    public void OnKeyDown(int keyCode) =>
         _inputService.Keyboard.SetKeyState((Keys)keyCode, ButtonState.States.Down);
 
     [JSInvokable]
-    public async ValueTask OnKeyUp(int keyCode) =>
+    public void OnKeyUp(int keyCode) =>
         _inputService.Keyboard.SetKeyState((Keys)keyCode, ButtonState.States.Up);
 
     [JSInvokable]
-    public async ValueTask OnMouseMove(int x, int y) =>
+    public void OnMouseMove(int x, int y) =>
         _inputService.Mouse.SetPosition(x, y);
 
 }

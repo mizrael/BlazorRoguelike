@@ -1,26 +1,40 @@
 using System.Collections.Generic;
 using Blazor.Extensions;
 using Microsoft.AspNetCore.Components;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace BlazorRoguelike.Core.Web.Components
 {
-    public abstract class CanvasManagerBase : ComponentBase 
+    public abstract class CanvasManagerBase : ComponentBase
     {
-        protected readonly Dictionary<string, CanvasOptions> _names = new ();
+        protected readonly Dictionary<string, CanvasOptions> _names = new();
         protected readonly Dictionary<string, BECanvasComponent> _canvases = new();
 
-        public void CreateCanvas(string name, CanvasOptions options = null)
+        public ValueTask<BECanvasComponent> CreateCanvas(string name)
+            => CreateCanvas(name, CanvasOptions.Defaults);
+            
+        public async ValueTask<BECanvasComponent> CreateCanvas(string name, CanvasOptions options)
         {
-            options ??= CanvasOptions.Defaults;
             _names.Add(name, options);
-            this.StateHasChanged();
-        }       
 
-        public BECanvasComponent GetCanvas(string name) => _canvases[name];
+            this.StateHasChanged();
+
+            await this.OnCanvasAdded.InvokeAsync();
+
+            return _canvases[name];
+        }
+
+        [Parameter]
+        public EventCallback OnCanvasAdded { get; set; }
     }
 
-    public record CanvasOptions(bool Hidden = false, bool Primary = false){
-        public static CanvasOptions Defaults = new CanvasOptions(false, true);
-        public static CanvasOptions Offscreen = new CanvasOptions(false, false);
+    public struct CanvasOptions
+    {
+        public bool Hidden { get; set; }
+        public readonly static CanvasOptions Defaults = new CanvasOptions()
+        {
+            Hidden = false
+        };
     }
 }

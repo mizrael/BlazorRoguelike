@@ -64,8 +64,7 @@ namespace BlazorRoguelike.Web.Game.Scenes
             var dungeon = generator.Generate();
 
             var mapRenderer = new OffscreenMapRenderer();
-            this.Game.Display.CanvasManager.CreateCanvas("map", CanvasOptions.Offscreen);
-            var canvas = this.Game.Display.CanvasManager.GetCanvas("map");            
+            var canvas = await this.Game.Display.CanvasManager.CreateCanvas("map", new CanvasOptions(){ Hidden = true});
             mapRenderer.Canvas = await canvas.CreateCanvas2DAsync();
             mapRenderer.Dungeon = dungeon;
             mapRenderer.Tileset = _assetsResolver.Get<SpriteSheet>("assets/tilesets/dungeon4.json");

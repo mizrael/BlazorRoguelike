@@ -3,7 +3,7 @@
 <div class="canvases">
     @foreach (var (name, options) in _names)
     {
-        <div id="@(name)Container" class="canvasContainer @(options.Primary ? "primary" : "")" hidden="@options.Hidden">
+        <div id="@(name)Container" class="canvasContainer" hidden="@options.Hidden">
             <BECanvas @ref="_canvases[name]" />
         </div>
     }

@@ -66,8 +66,8 @@ namespace BlazorRoguelike.Core
 
         private async ValueTask InitRenderer()
         {
-            this.Display.CanvasManager.CreateCanvas("main");
-            var canvas = this.Display.CanvasManager.GetCanvas("main");
+            var canvas = await this.Display.CanvasManager.CreateCanvas("main");
+            
             var context = await canvas.CreateCanvas2DAsync();
             _renderService = new RenderService(this, context);
             this.AddService(_renderService);
