@@ -60,6 +60,7 @@
 
         window.playSound = function (name, loop) {
             const audio = window.game.sounds[name];
+            if(!audio) return;
             audio.loop = loop;
             audio.play();
         }

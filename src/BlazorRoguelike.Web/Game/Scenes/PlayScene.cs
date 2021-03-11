@@ -29,6 +29,7 @@ namespace BlazorRoguelike.Web.Game.Scenes
             await InitMap();
 
             InitCursor();
+            InitPlayer();
 
 #if DEBUG
             InitUI();
@@ -54,8 +55,8 @@ namespace BlazorRoguelike.Web.Game.Scenes
                 transform.Local.Position.X = inputService.Mouse.X;
                 transform.Local.Position.Y = inputService.Mouse.Y;
 
-                var x = (int)(transform.Local.Position.X /  _mapRenderer.TileWidth);
-                var y = (int)(transform.Local.Position.Y /  _mapRenderer.TileHeight);
+                var x = (int)(transform.Local.Position.X / _mapRenderer.TileWidth);
+                var y = (int)(transform.Local.Position.Y / _mapRenderer.TileHeight);
                 var isWalkable = _map.IsWalkable(x, y);
                 var spriteName = isWalkable ? "cursor" : "cursor-x";
                 renderer.Sprite = spriteSheet.GetSprite(spriteName);
@@ -74,7 +75,7 @@ namespace BlazorRoguelike.Web.Game.Scenes
             _map = new Map(dungeon);
 
             var canvas = await this.Game.Display.CanvasManager.CreateCanvas("map", new CanvasOptions() { Hidden = true });
-            _mapRenderer = new OffscreenMapRenderer();            
+            _mapRenderer = new OffscreenMapRenderer();
             _mapRenderer.Canvas = await canvas.CreateCanvas2DAsync();
             _mapRenderer.Map = _map;
             _mapRenderer.Tileset = _assetsResolver.Get<SpriteSheet>("assets/tilesets/dungeon4.json");
@@ -91,6 +92,23 @@ namespace BlazorRoguelike.Web.Game.Scenes
             };
 
             this.Root.AddChild(map);
+        }
+
+        private void InitPlayer()
+        {
+            var playerStartTile = _map.GetRandomWalkableTile();
+
+            var player = new GameObject();
+            var transform = player.Components.Add<TransformComponent>();
+            transform.Local.Position.X = playerStartTile.row * _mapRenderer.TileWidth + _mapRenderer.TileWidth/2;
+            transform.Local.Position.Y = playerStartTile.col * _mapRenderer.TileHeight + _mapRenderer.TileHeight/2;
+
+            var renderer = player.Components.Add<SpriteRenderComponent>();
+            var spriteSheet = _assetsResolver.Get<SpriteSheet>("assets/tilesets/dungeon4.json");
+            renderer.Sprite = spriteSheet.GetSprite("player-base");
+            renderer.LayerIndex = (int)RenderLayers.Player;
+
+            this.Root.AddChild(player);
         }
 
         private void InitUI()

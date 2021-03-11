@@ -1,4 +1,5 @@
 using System;
+using BlazorRoguelike.Core.Utils;
 
 namespace BlazorRoguelike.Web.Game.Scenes
 {
@@ -12,11 +13,21 @@ namespace BlazorRoguelike.Web.Game.Scenes
             _dungeon = dungeon;
             _cells = _dungeon.ExpandToTiles(4);
             this.Rows = _cells.GetLength(0);
-            this.Cols = _cells.GetLength(1);
+            this.Cols = _cells.GetLength(1);            
         }
 
         public readonly int Rows;
         public readonly int Cols;
+
+        public (int row, int col) GetRandomWalkableTile(){
+            while(true){
+                var row = MathUtils.Random.Next(this.Rows);
+                var col = MathUtils.Random.Next(this.Cols);
+                var cell = GetCellAt(row, col);
+                if(cell == DungeonGenerator.TileType.Empty)
+                    return (row, col);
+            }            
+        }
 
         public DungeonGenerator.TileType GetCellAt(int row, int col)
         {
