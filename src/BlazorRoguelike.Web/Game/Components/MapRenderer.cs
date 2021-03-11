@@ -70,14 +70,14 @@ namespace BlazorRoguelike.Web.Game.Components
             {
                 for (int col = 0; col < _map.Cols; col++)
                 {
-                    var cell = _map.GetCellAt(row, col);
+                    var tile = _map.GetTileAt(row, col);
 
-                    var tile = Tileset.GetSprite(_tileNames[cell]);
-                    if (tile is null)
+                    var tileSprite = Tileset.GetSprite(_tileNames[tile.Type]);
+                    if (tileSprite is null)
                         continue;
 
-                    await this.Canvas.DrawImageAsync(tile.ElementRef,
-                        tile.Bounds.X, tile.Bounds.Y, tile.Bounds.Width, tile.Bounds.Height,
+                    await this.Canvas.DrawImageAsync(tileSprite.ElementRef,
+                        tileSprite.Bounds.X, tileSprite.Bounds.Y, tileSprite.Bounds.Width, tileSprite.Bounds.Height,
                         row * TileWidth, col * TileHeight,
                         TileWidth, TileHeight).ConfigureAwait(false);
                 }

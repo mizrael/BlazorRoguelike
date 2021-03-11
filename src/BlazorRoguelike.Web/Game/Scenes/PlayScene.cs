@@ -57,8 +57,8 @@ namespace BlazorRoguelike.Web.Game.Scenes
 
                 var x = (int)(transform.Local.Position.X / _mapRenderer.TileWidth);
                 var y = (int)(transform.Local.Position.Y / _mapRenderer.TileHeight);
-                var isWalkable = _map.IsWalkable(x, y);
-                var spriteName = isWalkable ? "cursor" : "cursor-x";
+                var tile = _map.GetTileAt(x,y);                
+                var spriteName = tile.IsWalkable ? "cursor" : "cursor-x";
                 renderer.Sprite = spriteSheet.GetSprite(spriteName);
 
                 return ValueTask.CompletedTask;
@@ -96,12 +96,12 @@ namespace BlazorRoguelike.Web.Game.Scenes
 
         private void InitPlayer()
         {
-            var playerStartTile = _map.GetRandomWalkableTile();
+            var playerStartTile = _map.GetRandomEmptyTile();
 
             var player = new GameObject();
             var transform = player.Components.Add<TransformComponent>();
-            transform.Local.Position.X = playerStartTile.row * _mapRenderer.TileWidth + _mapRenderer.TileWidth/2;
-            transform.Local.Position.Y = playerStartTile.col * _mapRenderer.TileHeight + _mapRenderer.TileHeight/2;
+            transform.Local.Position.X = playerStartTile.Row * _mapRenderer.TileWidth + _mapRenderer.TileWidth/2;
+            transform.Local.Position.Y = playerStartTile.Col * _mapRenderer.TileHeight + _mapRenderer.TileHeight/2;
 
             var renderer = player.Components.Add<SpriteRenderComponent>();
             var spriteSheet = _assetsResolver.Get<SpriteSheet>("assets/tilesets/dungeon4.json");
