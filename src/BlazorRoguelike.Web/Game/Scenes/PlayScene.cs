@@ -15,7 +15,7 @@ namespace BlazorRoguelike.Web.Game.Scenes
 
         private readonly IAssetsResolver _assetsResolver;
         private Map _map;
-        private OffscreenMapRenderer _mapRenderer;
+        private MapRenderComponent _mapRenderer;
 
         #endregion "private members"
 
@@ -55,9 +55,7 @@ namespace BlazorRoguelike.Web.Game.Scenes
                 transform.Local.Position.X = inputService.Mouse.X;
                 transform.Local.Position.Y = inputService.Mouse.Y;
 
-                var x = (int)(transform.Local.Position.X / _mapRenderer.TileWidth);
-                var y = (int)(transform.Local.Position.Y / _mapRenderer.TileHeight);
-                var tile = _map.GetTileAt(x,y);                
+                var tile = _mapRenderer.GetTileAt(transform.Local.Position);
                 var spriteName = tile.IsWalkable ? "cursor" : "cursor-x";
                 renderer.Sprite = spriteSheet.GetSprite(spriteName);
 
@@ -75,20 +73,20 @@ namespace BlazorRoguelike.Web.Game.Scenes
             _map = new Map(dungeon);
 
             var canvas = await this.Game.Display.CanvasManager.CreateCanvas("map", new CanvasOptions() { Hidden = true });
-            _mapRenderer = new OffscreenMapRenderer();
-            _mapRenderer.Canvas = await canvas.CreateCanvas2DAsync();
-            _mapRenderer.Map = _map;
-            _mapRenderer.Tileset = _assetsResolver.Get<SpriteSheet>("assets/tilesets/dungeon4.json");
+            var offscreenRenderer = new OffscreenMapRenderer();
+            offscreenRenderer.Canvas = await canvas.CreateCanvas2DAsync();
+            offscreenRenderer.Map = _map;
+            offscreenRenderer.Tileset = _assetsResolver.Get<SpriteSheet>("assets/tilesets/dungeon4.json");
 
             var map = new GameObject();
             map.Components.Add<TransformComponent>();
-            var renderComp = map.Components.Add<MapRenderComponent>();
-            renderComp.Renderer = _mapRenderer;
-            renderComp.LayerIndex = (int)RenderLayers.Background;
+            _mapRenderer = map.Components.Add<MapRenderComponent>();
+            _mapRenderer.OffscreenRenderer = offscreenRenderer;
+            _mapRenderer.LayerIndex = (int)RenderLayers.Background;
 
             this.Game.Display.OnSizeChanged += () =>
             {
-                _mapRenderer.ForceRendering();
+                offscreenRenderer.ForceRendering();
             };
 
             this.Root.AddChild(map);
@@ -100,13 +98,15 @@ namespace BlazorRoguelike.Web.Game.Scenes
 
             var player = new GameObject();
             var transform = player.Components.Add<TransformComponent>();
-            transform.Local.Position.X = playerStartTile.Row * _mapRenderer.TileWidth + _mapRenderer.TileWidth/2;
-            transform.Local.Position.Y = playerStartTile.Col * _mapRenderer.TileHeight + _mapRenderer.TileHeight/2;
+            transform.Local.Position = _mapRenderer.GetTilePos(playerStartTile);
 
             var renderer = player.Components.Add<SpriteRenderComponent>();
             var spriteSheet = _assetsResolver.Get<SpriteSheet>("assets/tilesets/dungeon4.json");
             renderer.Sprite = spriteSheet.GetSprite("player-base");
             renderer.LayerIndex = (int)RenderLayers.Player;
+
+            var brain = player.Components.Add<PlayerBrain>();
+            brain.MapRenderer = _mapRenderer;
 
             this.Root.AddChild(player);
         }

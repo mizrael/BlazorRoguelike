@@ -12,7 +12,7 @@ namespace BlazorRoguelike.Core.Components
             this.Owner = owner ?? throw new ArgumentNullException(nameof(owner));
         }
 
-        protected virtual void Init(){}
+        protected virtual ValueTask Init(GameContext game) => ValueTask.CompletedTask;
 
         protected virtual ValueTask UpdateCore(GameContext game) => ValueTask.CompletedTask;
 
@@ -21,7 +21,7 @@ namespace BlazorRoguelike.Core.Components
                 return ValueTask.CompletedTask;
                 
             if(!_initialized){                
-                Init();
+                Init(game);
                 _initialized = true;
             }
             

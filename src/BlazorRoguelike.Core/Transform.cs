@@ -8,13 +8,13 @@ namespace BlazorRoguelike.Core
         public Vector2 Position;
 
         public Vector2 Scale;
-        
+
         public float Rotation;
 
         public Vector2 GetDirection()
         {
             return new Vector2(-MathF.Sin(Rotation), MathF.Cos(Rotation));
-        } 
+        }
 
         public void Clone(Transform source)
         {

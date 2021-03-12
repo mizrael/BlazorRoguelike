@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using BlazorRoguelike.Core.Utils;
@@ -15,14 +14,14 @@ namespace BlazorRoguelike.Core.GameServices
 
     public struct ButtonState
     {
-        public ButtonState(States state, bool wasPressed)
+        public ButtonState(bool clicked, bool wasClicked)
         {
-            State = state;
-            WasPressed = wasPressed;
+            IsClicked = clicked;
+            WasClicked = wasClicked;
         }
 
-        public bool WasPressed { get; }
-        public States State { get; }
+        public bool IsClicked { get; }
+        public bool WasClicked { get; }
 
         public enum States
         {
@@ -30,7 +29,7 @@ namespace BlazorRoguelike.Core.GameServices
             Down = 1
         }
 
-        public static readonly ButtonState None = new ButtonState(States.Up, false);
+        public static readonly ButtonState None = new ButtonState(false, false);
     }
 
     public enum Keys
@@ -52,12 +51,14 @@ namespace BlazorRoguelike.Core.GameServices
         private int _x;
         private int _y;
 
-        public MouseState(){
-             _buttonStates = EnumUtils.GetAllValues<MouseButtons>()
-                .ToDictionary(v => v, v => ButtonState.None);
+        public MouseState()
+        {
+            _buttonStates = EnumUtils.GetAllValues<MouseButtons>()
+               .ToDictionary(v => v, v => ButtonState.None);
         }
 
-        public void SetPosition(int x, int y){
+        public void SetPosition(int x, int y)
+        {
             _x = x;
             _y = y;
         }
@@ -65,19 +66,24 @@ namespace BlazorRoguelike.Core.GameServices
         public void SetButtonState(MouseButtons button, ButtonState.States state)
         {
             var oldState = _buttonStates[button];
-            _buttonStates[button] = new ButtonState(state, oldState.State == ButtonState.States.Down);
+            _buttonStates[button] = new ButtonState(state == ButtonState.States.Down, oldState.IsClicked);
+            
+            OnButtonStateChanged?.Invoke(button, _buttonStates[button], oldState);
         }
 
         public ButtonState GetButtonState(MouseButtons button) => _buttonStates[button];
 
         public int X => _x;
         public int Y => _y;
+
+        public event OnButtonStateChangedHandler OnButtonStateChanged;
+        public delegate void OnButtonStateChangedHandler(MouseButtons buttons, ButtonState newState, ButtonState oldState);
     }
 
     public class KeyboardState
     {
         private readonly IDictionary<Keys, ButtonState> _keyboardStates;
-        
+
         public KeyboardState()
         {
             _keyboardStates = EnumUtils.GetAllValues<Keys>()
@@ -87,7 +93,7 @@ namespace BlazorRoguelike.Core.GameServices
         public void SetKeyState(Keys key, ButtonState.States state)
         {
             var oldState = _keyboardStates[key];
-            _keyboardStates[key] = new ButtonState(state, oldState.State == ButtonState.States.Down);
+            _keyboardStates[key] = new ButtonState(state == ButtonState.States.Down, oldState.IsClicked);
         }
 
         public ButtonState GetKeyState(Keys key) => _keyboardStates[key];
@@ -98,7 +104,7 @@ namespace BlazorRoguelike.Core.GameServices
         public ValueTask Step() => ValueTask.CompletedTask;
 
         public MouseState Mouse { get; } = new();
-        public KeyboardState Keyboard {get;} = new();
+        public KeyboardState Keyboard { get; } = new();
     }
 
 }

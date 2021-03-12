@@ -22,9 +22,10 @@ namespace BlazorRoguelike.Core.Components
             _boolParams = new Dictionary<string, bool>();
         }
 
-        protected override void Init()
-        {
+        protected override ValueTask Init(GameContext game)
+        {            
             _animationComponent = Owner.Components.Get<AnimatedSpriteRenderComponent>();
+            return ValueTask.CompletedTask;
         }
 
         public void AddState(AnimationState state)

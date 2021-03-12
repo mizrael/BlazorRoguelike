@@ -18,9 +18,10 @@ namespace BlazorRoguelike.Core.Components
 
         }
 
-        protected override void Init()
+        protected override ValueTask Init(GameContext game)
         {
             _transform = Owner.Components.Get<TransformComponent>();
+            return ValueTask.CompletedTask;
         }
 
         public Rectangle Bounds => _bounds;

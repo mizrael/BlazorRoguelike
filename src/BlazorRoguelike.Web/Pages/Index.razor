@@ -69,14 +69,21 @@
 
     [JSInvokable]
     public void OnKeyDown(int keyCode) =>
-        _inputService.Keyboard.SetKeyState((Keys)keyCode, ButtonState.States.Down);
+        _inputService?.Keyboard.SetKeyState((Keys)keyCode, ButtonState.States.Down);
 
     [JSInvokable]
     public void OnKeyUp(int keyCode) =>
-        _inputService.Keyboard.SetKeyState((Keys)keyCode, ButtonState.States.Up);
+        _inputService?.Keyboard.SetKeyState((Keys)keyCode, ButtonState.States.Up);
 
     [JSInvokable]
     public void OnMouseMove(int x, int y) =>
-        _inputService.Mouse.SetPosition(x, y);
+        _inputService?.Mouse.SetPosition(x, y);
 
+    [JSInvokable]
+    public void OnMouseDown(MouseButtons button) =>
+        _inputService?.Mouse.SetButtonState(button, ButtonState.States.Down);
+    
+    [JSInvokable]
+    public void OnMouseUp(MouseButtons button) =>
+        _inputService?.Mouse.SetButtonState(button, ButtonState.States.Up);
 }

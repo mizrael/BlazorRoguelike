@@ -1,5 +1,8 @@
 using System;
-using System.Drawing;
+using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
+using BlazorRoguelike.Core.AI;
 using BlazorRoguelike.Core.Utils;
 
 namespace BlazorRoguelike.Web.Game.Scenes
@@ -9,6 +12,10 @@ namespace BlazorRoguelike.Web.Game.Scenes
         private readonly DungeonGenerator.Dungeon _dungeon;
         private readonly TileInfo[,] _tiles;
 
+        private Func<TileInfo, TileInfo, double> _distanceFunc;
+        private Func<TileInfo, TileInfo, double> _estimateFunc;
+        private Func<TileInfo, IEnumerable<TileInfo>> _findNeighboursFunc;
+
         public Map(DungeonGenerator.Dungeon dungeon)
         {
             _dungeon = dungeon;
@@ -17,11 +24,20 @@ namespace BlazorRoguelike.Web.Game.Scenes
             this.Cols = cells.GetLength(1);
 
             _tiles = new TileInfo[this.Rows, this.Cols];
-            for(int row=0;row<this.Rows;row++)
-            for(int col=0;col<this.Cols;col++){
-                var cell = cells[row, col];
-                _tiles[row, col] = new TileInfo(row, col, cell);
-            }
+            for (int row = 0; row < this.Rows; row++)
+                for (int col = 0; col < this.Cols; col++)
+                {
+                    var cell = cells[row, col];
+                    _tiles[row, col] = new TileInfo(row, col, cell);
+                }
+
+            _findNeighboursFunc = t => GetNeighbours(t, n => null != n && n.IsWalkable);
+            _distanceFunc = _estimateFunc = (t1, t2) =>
+            {
+                int dx = t2.Row - t1.Row;
+                int dy = t2.Col - t1.Col;
+                return dx * dx + dy * dy;
+            };
         }
 
         public readonly int Rows;
@@ -30,7 +46,7 @@ namespace BlazorRoguelike.Web.Game.Scenes
         public TileInfo GetRandomEmptyTile()
         {
             int count = 0;
-            while (count++<10)
+            while (count++ < 10)
             {
                 var row = MathUtils.Random.Next(this.Rows);
                 var col = MathUtils.Random.Next(this.Cols);
@@ -48,11 +64,83 @@ namespace BlazorRoguelike.Web.Game.Scenes
             return _tiles[row, col];
         }
 
+        public Queue<TileInfo> FindPath(TileInfo start, TileInfo destination)
+        {
+            var queue = new Queue<TileInfo>();
+
+            if (null == start || null == destination)
+                return queue;
+
+            if (start == destination)
+            {
+                queue.Enqueue(destination);
+                return queue;
+            }
+
+            var path = Pathfinder.FindPath(start, destination,
+                           _distanceFunc,
+                           _estimateFunc,
+                           _findNeighboursFunc);
+            if (null == path)
+                return queue;
+            
+            var reversedPath = path.Reverse();
+            foreach (var node in reversedPath)
+                queue.Enqueue(node);
+            return queue;
+        }
+
+        public TileInfo[] GetNeighbours(TileInfo tile, Predicate<TileInfo> filter)
+        {
+            var results = new List<TileInfo>(8);
+
+            int x = tile.Row - 1;
+            int y = tile.Col - 1;
+            if (x > -1 && x < this.Rows && y > -1 && y < this.Cols && filter(_tiles[x, y]))
+                results.Add(_tiles[x, y]);
+
+            x = tile.Row;
+            y = tile.Col - 1;
+            if (x > -1 && x < this.Rows && y > -1 && y < this.Cols && filter(_tiles[x, y]))
+                results.Add(_tiles[x, y]);
+
+            x = tile.Row + 1;
+            y = tile.Col - 1;
+            if (x > -1 && x < this.Rows && y > -1 && y < this.Cols && filter(_tiles[x, y]))
+                results.Add(_tiles[x, y]);
+
+            x = tile.Row - 1;
+            y = tile.Col;
+            if (x > -1 && x < this.Rows && y > -1 && y < this.Cols && filter(_tiles[x, y]))
+                results.Add(_tiles[x, y]);
+
+            x = tile.Row + 1;
+            y = tile.Col;
+            if (x > -1 && x < this.Rows && y > -1 && y < this.Cols && filter(_tiles[x, y]))
+                results.Add(_tiles[x, y]);
+
+            x = tile.Row - 1;
+            y = tile.Col + 1;
+            if (x > -1 && x < this.Rows && y > -1 && y < this.Cols && filter(_tiles[x, y]))
+                results.Add(_tiles[x, y]);
+
+            x = tile.Row;
+            y = tile.Col + 1;
+            if (x > -1 && x < this.Rows && y > -1 && y < this.Cols && filter(_tiles[x, y]))
+                results.Add(_tiles[x, y]);
+
+            x = tile.Row + 1;
+            y = tile.Col + 1;
+            if (x > -1 && x < this.Rows && y > -1 && y < this.Cols && filter(_tiles[x, y]))
+                results.Add(_tiles[x, y]);
+
+            return results.ToArray();
+        }
     }
 
     public record TileInfo(int Row, int Col, DungeonGenerator.TileType Type)
     {
         public bool IsWalkable => this.Type == DungeonGenerator.TileType.Door || this.Type == DungeonGenerator.TileType.Empty;
-       public static readonly TileInfo Void = new TileInfo(-1, -1, DungeonGenerator.TileType.Void);
+        public static readonly TileInfo Void = new TileInfo(-1, -1, DungeonGenerator.TileType.Void);
     }
 }

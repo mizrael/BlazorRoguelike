@@ -90,6 +90,12 @@
             window.onmousemove = (e) => {
                 game.instance.invokeMethodAsync('OnMouseMove', e.offsetX, e.offsetY);
             };
+            window.onmousedown = (e) =>{                
+                game.instance.invokeMethodAsync('OnMouseDown', e.button);
+            };
+            window.onmouseup = (e) =>{                
+                game.instance.invokeMethodAsync('OnMouseUp', e.button);
+            };
 
             window.addEventListener("resize", onResize);
         };

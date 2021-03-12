@@ -34,11 +34,31 @@ namespace BlazorRoguelike.Core.Utils
             var radians = degrees * MathUtils.Deg2Rad;
             var sin = MathF.Sin(radians);
             var cos = MathF.Cos(radians);
-            
+
             var tx = v.X;
             var ty = v.Y;
 
             return new Vector2(cos * tx - sin * ty, sin * tx + cos * ty);
+        }
+
+        /// <summary>
+        /// https://github.com/Unity-Technologies/UnityCsReference/blob/master/Runtime/Export/Math/Vector2.cs#L87
+        /// </summary>
+        public static Vector2 MoveTowards(Vector2 current, Vector2 target, float maxDistanceDelta)
+        {
+            // avoid vector ops because current scripting backends are terrible at inlining
+            float toVector_x = target.X - current.X;
+            float toVector_y = target.Y - current.Y;
+
+            float sqDist = toVector_x * toVector_x + toVector_y * toVector_y;
+
+            if (sqDist == 0 || (maxDistanceDelta >= 0 && sqDist <= maxDistanceDelta * maxDistanceDelta))
+                return target;
+
+            float dist = (float)Math.Sqrt(sqDist);
+
+            return new Vector2(current.X + toVector_x / dist * maxDistanceDelta,
+                current.Y + toVector_y / dist * maxDistanceDelta);
         }
     }
 }
