@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Blazor.Extensions;
 using BlazorRoguelike.Web.Game.Components;
 using BlazorRoguelike.Core.Web.Components;
+using System;
 
 namespace BlazorRoguelike.Web.Game.Scenes
 {
@@ -16,6 +17,7 @@ namespace BlazorRoguelike.Web.Game.Scenes
         private readonly IAssetsResolver _assetsResolver;
         private Map _map;
         private MapRenderComponent _mapRenderer;
+        private GameObject _movementCursor;
 
         #endregion "private members"
 
@@ -29,6 +31,8 @@ namespace BlazorRoguelike.Web.Game.Scenes
             await InitMap();
 
             InitCursor();
+            InitMovementCursor();
+
             InitPlayer();
 
 #if DEBUG
@@ -63,6 +67,34 @@ namespace BlazorRoguelike.Web.Game.Scenes
             };
 
             this.Root.AddChild(cursor);
+        }
+
+        private void InitMovementCursor()
+        {
+            var inputService = this.Game.GetService<InputService>();
+
+            _movementCursor = new GameObject();
+            var transform = _movementCursor.Components.Add<TransformComponent>();
+
+            var renderer = _movementCursor.Components.Add<SpriteRenderComponent>();
+            var spriteSheet = _assetsResolver.Get<SpriteSheet>("assets/tilesets/dungeon4.json");
+            renderer.Sprite = spriteSheet.GetSprite("cursor-move");
+            renderer.LayerIndex = (int)RenderLayers.UI;
+
+            var lambda = _movementCursor.Components.Add<LambdaComponent>();
+            lambda.OnUpdate = (_, g) =>
+            {
+                if(!_movementCursor.Enabled)
+                    return ValueTask.CompletedTask;
+                
+                transform.Local.Scale.Y = transform.Local.Scale.X = 1f + MathF.Sin(g.GameTime.TotalMilliseconds * 0.005f)*0.5f;
+
+                return ValueTask.CompletedTask;
+            };
+
+            _movementCursor.Enabled = false;
+
+            this.Root.AddChild(_movementCursor);
         }
 
         private async ValueTask InitMap()
@@ -107,6 +139,7 @@ namespace BlazorRoguelike.Web.Game.Scenes
 
             var brain = player.Components.Add<PlayerBrain>();
             brain.MapRenderer = _mapRenderer;
+            brain.MovementCursor = _movementCursor;
 
             this.Root.AddChild(player);
         }

@@ -16,6 +16,13 @@
       "height": "16"
     },
     {
+      "name": "cursor-move",
+      "x": "463",
+      "y": "361",
+      "width": "8",
+      "height": "8"
+    },
+    {
       "name": "floor",
       "x": "272",
       "y": "0",

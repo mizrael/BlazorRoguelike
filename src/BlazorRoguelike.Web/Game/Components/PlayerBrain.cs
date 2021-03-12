@@ -35,6 +35,12 @@ namespace BlazorRoguelike.Web.Game.Components
                     var startTile = MapRenderer.GetTileAt(_transform.Local.Position);
                     var endTile = MapRenderer.GetTileAt(_inputService.Mouse.X, _inputService.Mouse.Y);
                     _path = MapRenderer.Map.FindPath(startTile, endTile);
+
+                    if(_path.Any()){
+                        var tilePos = MapRenderer.GetTilePos(endTile);
+                        MovementCursor.Components.Get<TransformComponent>().Local.Position = tilePos;
+                        MovementCursor.Enabled = true;
+                    }
                 }
             };
 
@@ -56,10 +62,18 @@ namespace BlazorRoguelike.Web.Game.Components
             {
                 _currPathNode = null;                
                 _transform.Local.Position = tilePos;
+
+                if(!_path.Any())
+                {
+                    _path = null;
+                    MovementCursor.Enabled = false;
+                }
             }
         }
 
         public MapRenderComponent MapRenderer;
         public float Speed = 1.5f;
+
+        public GameObject MovementCursor;
     }
 }
