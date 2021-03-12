@@ -86,4 +86,8 @@
     [JSInvokable]
     public void OnMouseUp(MouseButtons button) =>
         _inputService?.Mouse.SetButtonState(button, ButtonState.States.Up);
+
+    [JSInvokable]
+    public void OnMouseWheel(int delta) =>
+        _inputService?.Mouse.Scroll(delta);        
 }

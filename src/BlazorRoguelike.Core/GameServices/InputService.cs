@@ -73,11 +73,16 @@ namespace BlazorRoguelike.Core.GameServices
 
         public ButtonState GetButtonState(MouseButtons button) => _buttonStates[button];
 
+        public void Scroll(int delta) => OnScroll?.Invoke(delta);
+
         public int X => _x;
         public int Y => _y;
 
         public event OnButtonStateChangedHandler OnButtonStateChanged;
         public delegate void OnButtonStateChangedHandler(MouseButtons buttons, ButtonState newState, ButtonState oldState);
+
+        public event OnScrollHandler OnScroll;
+        public delegate void OnScrollHandler(int delta);
     }
 
     public class KeyboardState

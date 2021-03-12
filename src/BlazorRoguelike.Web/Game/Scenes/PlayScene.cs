@@ -84,10 +84,10 @@ namespace BlazorRoguelike.Web.Game.Scenes
             var lambda = _movementCursor.Components.Add<LambdaComponent>();
             lambda.OnUpdate = (_, g) =>
             {
-                if(!_movementCursor.Enabled)
+                if (!_movementCursor.Enabled)
                     return ValueTask.CompletedTask;
-                
-                transform.Local.Scale.Y = transform.Local.Scale.X = 1f + MathF.Sin(g.GameTime.TotalMilliseconds * 0.005f)*0.5f;
+
+                transform.Local.Scale.Y = transform.Local.Scale.X = 1f + MathF.Sin(g.GameTime.TotalMilliseconds * 0.005f) * 0.5f;
 
                 return ValueTask.CompletedTask;
             };

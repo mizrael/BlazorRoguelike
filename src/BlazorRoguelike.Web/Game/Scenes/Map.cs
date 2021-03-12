@@ -36,7 +36,7 @@ namespace BlazorRoguelike.Web.Game.Scenes
             {
                 int dx = t2.Row - t1.Row;
                 int dy = t2.Col - t1.Col;
-                return dx * dx + dy * dy;
+                return Math.Sqrt(dx * dx + dy * dy);
             };
         }
 
