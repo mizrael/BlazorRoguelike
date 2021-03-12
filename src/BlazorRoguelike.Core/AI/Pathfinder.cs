@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using BlazorRoguelike.Core.Utils;
@@ -9,15 +10,58 @@ namespace BlazorRoguelike.Core.AI
     /// http://blogs.msdn.com/b/ericlippert/archive/2007/10/02/path-finding-using-a-in-c-3-0.aspx
     public class Pathfinder
     {
+        private class TempPath<TN> : IEnumerable<TN>
+        {
+            public TN LastStep { get; private set; }
+            public TempPath<TN> PreviousSteps { get; private set; }
+            public double TotalCost { get; private set; }
+
+            private TempPath(TN lastStep, TempPath<TN> previousSteps, double totalCost)
+            {
+                LastStep = lastStep;
+                PreviousSteps = previousSteps;
+                TotalCost = totalCost;
+            }
+            public TempPath(TN start) : this(start, null, 0) { }
+            public TempPath<TN> AddStep(TN step, double stepCost)
+            {
+                return new TempPath<TN>(step, this, TotalCost + stepCost);
+            }
+
+            public IEnumerator<TN> GetEnumerator()
+            {
+                for (TempPath<TN> p = this; p != null; p = p.PreviousSteps)
+                    yield return p.LastStep;
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return this.GetEnumerator();
+            }
+        }
+
         public static Path<TN> FindPath<TN>(TN start,
                                             TN destination,
                                             Func<TN, TN, double> distance,
                                             Func<TN, TN, double> estimate,
                                             Func<TN, IEnumerable<TN>> findNeighbours)
         {
+            var path = FindPathCore(start, destination, distance, estimate, findNeighbours);
+            if(path is null) return Path<TN>.Empty;
+
+            var steps = path.Reverse();
+            return new Path<TN>(steps);
+        }
+
+        private static TempPath<TN> FindPathCore<TN>(TN start,
+                                            TN destination,
+                                            Func<TN, TN, double> distance,
+                                            Func<TN, TN, double> estimate,
+                                            Func<TN, IEnumerable<TN>> findNeighbours)
+        {
             var closed = new HashSet<TN>();
-            var queue = new PriorityQueue<double, Path<TN>>();
-            queue.Enqueue(0, new Path<TN>(start));
+            var queue = new PriorityQueue<double, TempPath<TN>>();
+            queue.Enqueue(0, new TempPath<TN>(start));
             while (!queue.IsEmpty)
             {
                 var path = queue.Dequeue();

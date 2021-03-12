@@ -2,11 +2,10 @@ using BlazorRoguelike.Core;
 using BlazorRoguelike.Core.Components;
 using BlazorRoguelike.Core.GameServices;
 using System.Threading.Tasks;
-using BlazorRoguelike.Web.Game.Components;
-using System.Collections.Generic;
 using BlazorRoguelike.Web.Game.Scenes;
 using BlazorRoguelike.Core.Utils;
 using System.Numerics;
+using BlazorRoguelike.Core.AI;
 
 namespace BlazorRoguelike.Web.Game.Components
 {
@@ -14,7 +13,7 @@ namespace BlazorRoguelike.Web.Game.Components
     {
         private TransformComponent _transform;
         private InputService _inputService;
-        private Queue<TileInfo> _path;
+        private Path<TileInfo> _path;
         private TileInfo _currPathNode;
 
         private PlayerBrain(GameObject owner) : base(owner)
@@ -44,9 +43,9 @@ namespace BlazorRoguelike.Web.Game.Components
 
         protected override async ValueTask UpdateCore(GameContext game)
         {
-            if (_path is null || (0 == _path.Count && _currPathNode is null))
+            if (_path is null || (!_path.Any() && _currPathNode is null))
                 return;
-            _currPathNode = _currPathNode ?? _path.Dequeue();
+            _currPathNode = _currPathNode ?? _path.Next();
 
             var tilePos = MapRenderer.GetTilePos(_currPathNode);
             var newPos = Vector2Utils.MoveTowards(_transform.World.Position, tilePos, Speed);

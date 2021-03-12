@@ -64,32 +64,20 @@ namespace BlazorRoguelike.Web.Game.Scenes
             return _tiles[row, col];
         }
 
-        public Queue<TileInfo> FindPath(TileInfo start, TileInfo destination)
+        public Path<TileInfo> FindPath(TileInfo start, TileInfo destination)
         {
-            var queue = new Queue<TileInfo>();
-
             if (null == start || null == destination)
-                return queue;
+                return Path<TileInfo>.Empty;
 
-            if (start == destination)
-            {
-                queue.Enqueue(destination);
-                return queue;
-            }
+            if (start == destination)            
+                return new Path<TileInfo>(new[]{ destination});            
 
-            var path = Pathfinder.FindPath(start, destination,
+            return Pathfinder.FindPath(start, destination,
                            _distanceFunc,
                            _estimateFunc,
-                           _findNeighboursFunc);
-            if (null == path)
-                return queue;
-            
-            var reversedPath = path.Reverse();
-            foreach (var node in reversedPath)
-                queue.Enqueue(node);
-            return queue;
+                           _findNeighboursFunc);          
         }
-
+        
         public TileInfo[] GetNeighbours(TileInfo tile, Predicate<TileInfo> filter)
         {
             var results = new List<TileInfo>(8);
