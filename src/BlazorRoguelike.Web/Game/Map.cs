@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
 using BlazorRoguelike.Core.AI;
 using BlazorRoguelike.Core.Utils;
 
-namespace BlazorRoguelike.Web.Game.Scenes
+namespace BlazorRoguelike.Web.Game
 {
     public class Map
     {

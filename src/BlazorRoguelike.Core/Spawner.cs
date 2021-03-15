@@ -1,5 +1,6 @@
 ﻿using System;
 using BlazorRoguelike.Core;
+using BlazorRoguelike.Core.GameServices;
 using BlazorRoguelike.Core.Utils;
 
 namespace BlazorRoguelike.Core
@@ -9,7 +10,7 @@ namespace BlazorRoguelike.Core
         private readonly Action<GameObject> _onItemSpawn;
         private readonly Pool<GameObject> _pool;
 
-        public Spawner(Func<GameObject> factory, Action<GameObject> onItemSpawn)
+        public Spawner(Func<GameObject> factory, Action<GameObject> onItemSpawn, Scene scene, string name = "") : base(scene, name)
         {
             _onItemSpawn = onItemSpawn;
             _pool = new Pool<GameObject>(factory);

@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BlazorRoguelike.Core.Components;
+using BlazorRoguelike.Core.GameServices;
 
 namespace BlazorRoguelike.Core
 {
@@ -8,15 +10,19 @@ namespace BlazorRoguelike.Core
     {
         private static int _lastId = 0;
 
-        private readonly IList<GameObject> _children;
+        private readonly List<GameObject> _children = new();
 
-        public GameObject()
+        public GameObject(GameServices.Scene scene) : this(scene, ""){}
+
+        public GameObject(GameServices.Scene scene, string name)
         {
+            this.Scene = scene ?? throw new ArgumentNullException(nameof(scene));
+            this.Name = name;
             this.Id = ++_lastId;
 
-            _children = new List<GameObject>();
-
             this.Components = new ComponentsCollection(this);
+
+            this.Scene.Register(this);
         }
 
         public int Id { get; }
@@ -41,7 +47,16 @@ namespace BlazorRoguelike.Core
                     this.OnDisabled?.Invoke(this);
             }
         }
-        
+
+        public Scene Scene { get; }
+        public string Name { get; }
+
+        public OnChildAddedHandler OnChildAdded;
+        public delegate void OnChildAddedHandler(GameObject sender, GameObject child);
+
+        public OnChildRemovedHandler OnChildRemoved;
+        public delegate void OnChildRemovedHandler(GameObject sender, GameObject child);
+
         public void AddChild(GameObject child)
         {
             if (this.Equals(child.Parent))
@@ -50,6 +65,7 @@ namespace BlazorRoguelike.Core
             child.Parent?._children.Remove(child);
             child.Parent = this;
             _children.Add(child);
+            OnChildAdded?.Invoke(this, child);
         }
 
         public void RemoveChild(GameObject child){
@@ -57,6 +73,7 @@ namespace BlazorRoguelike.Core
                 return;
             child.Parent = null;
             _children.Remove(child);
+            OnChildRemoved?.Invoke(this, child);
         }
 
         public async ValueTask Update(GameContext game)

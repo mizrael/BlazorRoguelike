@@ -4,40 +4,6 @@ using System.Threading.Tasks;
 
 namespace BlazorRoguelike.Core.GameServices
 {
-    public abstract class Scene
-    {
-        protected GameContext Game { get; }
-
-        protected Scene(GameContext game)
-        {
-            this.Game = game ?? throw new ArgumentNullException(nameof(game));
-        }
-
-        public async ValueTask Step()
-        {
-            if (null != Root)
-                await Root.Update(this.Game);
-            await this.Update();
-        }
-
-        public ValueTask Enter()
-        {
-            this.Root = new GameObject();
-            return this.EnterCore();
-        }
-        protected virtual ValueTask EnterCore() => ValueTask.CompletedTask;
-
-        public ValueTask Exit()
-        {
-            this.Root = null;
-            return this.ExitCore();
-        }
-
-        protected virtual ValueTask ExitCore() => ValueTask.CompletedTask;
-        protected virtual ValueTask Update() => ValueTask.CompletedTask;
-
-        public GameObject Root { get; private set; }
-    }
 
     public class SceneManager : IGameService
     {

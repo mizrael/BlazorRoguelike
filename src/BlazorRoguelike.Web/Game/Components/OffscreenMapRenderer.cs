@@ -7,7 +7,7 @@ namespace BlazorRoguelike.Web.Game.Components
 {
     public class OffscreenMapRenderer
     {
-        private Game.Scenes.Map _map;
+        private Game.Map _map;
         private int _tileWidth = 16;
         private int _tileHeigth = 16;
         private int _mapWidth;
@@ -69,7 +69,7 @@ namespace BlazorRoguelike.Web.Game.Components
 
         public void ForceRendering() => _canRender = true;
 
-        public Game.Scenes.Map Map
+        public Game.Map Map
         {
             get => _map;
             set
