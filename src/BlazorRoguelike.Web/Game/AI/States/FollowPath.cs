@@ -2,7 +2,7 @@
 using BlazorRoguelike.Core.AI.FSM;
 using BlazorRoguelike.Web.Game.Components;
 
-namespace BlazorRoguelike.Web.Game.AI
+namespace BlazorRoguelike.Web.Game.AI.States
 {
     public class FollowPath : State
     {

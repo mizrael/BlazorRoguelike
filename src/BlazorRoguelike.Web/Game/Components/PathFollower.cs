@@ -37,7 +37,7 @@ namespace BlazorRoguelike.Web.Game.Components
             if (_path is null || (!_path.Any() && _currPathNode is null))
                 return;
 
-            _currPathNode = _currPathNode ?? _path.Next();
+            _currPathNode ??= _path.Next();
 
             var tilePos = _mapRenderer.GetTilePos(_currPathNode);
             var newPos = Vector2Utils.MoveTowards(_transform.World.Position, tilePos, Speed);
