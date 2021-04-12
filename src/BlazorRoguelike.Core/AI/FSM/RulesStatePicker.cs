@@ -5,8 +5,8 @@ namespace BlazorRoguelike.Core.AI.FSM
 {
 	public class RulesStatePicker : IStatePicker
     {
-        private List<(StatePickingRule rule, IStateFactory factory)> _rules = new();
-		private IStateFactory _defaultStateFactory;
+        private readonly List<(StatePickingRule rule, IStateFactory factory)> _rules = new();
+		private readonly IStateFactory _defaultStateFactory;
 
 		private State _currState;
 		private IStateFactory _currFactory;
