@@ -2,7 +2,7 @@
 using BlazorRoguelike.Core;
 using BlazorRoguelike.Core.AI.FSM;
 
-namespace BlazorRoguelike.Web.Game.AI
+namespace BlazorRoguelike.Web.Game.AI.States
 {
 	public class Idle : State
 	{
