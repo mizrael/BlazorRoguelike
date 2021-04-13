@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using BlazorRoguelike.Core.Utils;
 
 namespace BlazorRoguelike.Core.AI
@@ -40,20 +41,27 @@ namespace BlazorRoguelike.Core.AI
             }
         }
 
-        public static Path<TN> FindPath<TN>(TN start,
+        /// <summary>
+        /// https://github.com/dotnet/aspnetcore/issues/17730
+        /// </summary>
+        public static Task<Path<TN>> FindPathAsync<TN>(TN start,
                                             TN destination,
                                             Func<TN, TN, double> distance,
                                             Func<TN, TN, double> estimate,
                                             Func<TN, IEnumerable<TN>> findNeighbours)
-        {
-            var path = FindPathCore(start, destination, distance, estimate, findNeighbours);
-            if(path is null) return Path<TN>.Empty;
+            => Task.Run(() => FindPathCore(start, destination, distance, estimate, findNeighbours));
 
+        private static Path<TN> FindPathCore<TN>(TN start, TN destination, Func<TN, TN, double> distance, Func<TN, TN, double> estimate, Func<TN, IEnumerable<TN>> findNeighbours)
+        {
+            var path = RunPathfinder(start, destination, distance, estimate, findNeighbours);
+            if (path is null)
+                return Path<TN>.Empty;
+            
             var steps = path.Reverse();
             return new Path<TN>(steps);
         }
 
-        private static TempPath<TN> FindPathCore<TN>(TN start,
+        private static TempPath<TN> RunPathfinder<TN>(TN start,
                                             TN destination,
                                             Func<TN, TN, double> distance,
                                             Func<TN, TN, double> estimate,

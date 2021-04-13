@@ -66,9 +66,14 @@ namespace BlazorRoguelike.Web.Game.Components
                 return;
 
             var startTile = _mapRenderer.GetTileAt(_transform.Local.Position);
-            _path = _mapRenderer.Map.FindPath(startTile, destination);
-            if (_path.Any())
-                this.OnStartWalking?.Invoke(this, startTile, destination);
+            Task.Run(() => _mapRenderer.Map.FindPathAsync(startTile, destination)
+                .ContinueWith(t =>
+                {
+                    _path = t.Result;
+                    if (_path.Any())
+                        this.OnStartWalking?.Invoke(this, startTile, destination);
+                }).ConfigureAwait(false))
+                .ConfigureAwait(false);
         }
 
         public event OnStartWalkingHandler OnStartWalking;

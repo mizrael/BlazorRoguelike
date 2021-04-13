@@ -9,7 +9,7 @@ namespace BlazorRoguelike.Web.Game.AI.States
 		private float _duration;
 		private bool _hasDuration = false;
 		
-		public Idle(GameObject owner) : this(owner, 5f){}
+		public Idle(GameObject owner) : this(owner, 0f){}
 
 		public Idle(GameObject owner, float duration) : base(owner){
 			_duration = Math.Abs(duration);

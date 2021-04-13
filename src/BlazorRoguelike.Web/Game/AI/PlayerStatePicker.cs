@@ -7,7 +7,8 @@ namespace BlazorRoguelike.Web.Game.AI
         private State _currState;
         private State _prevState;
 
-        public void SetState(State newState){
+        public void SetState(State newState)
+        {
             _prevState = _currState;
             if (null != _prevState)
                 _prevState.Exit();
@@ -15,9 +16,6 @@ namespace BlazorRoguelike.Web.Game.AI
             _currState.Enter();
         }
 
-        public State PickState()
-        {
-            return _currState;
-        }
+        public State GetCurrentState() => _currState;
     }
 }

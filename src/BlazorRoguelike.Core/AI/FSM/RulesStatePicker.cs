@@ -24,7 +24,7 @@ namespace BlazorRoguelike.Core.AI.FSM
             _rules.Sort((a, b) => a.rule.Weight >= b.rule.Weight ? 1 : 0); //TODO: ensure sorting is descending
 		}
 
-		public State PickState(){
+		public State GetCurrentState(){
 			var (rule, factory) = FindValidStateBuilder ();
 
 			if(!CheckCanReplaceCurrentState(rule, factory))

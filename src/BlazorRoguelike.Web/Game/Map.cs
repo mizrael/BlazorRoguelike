@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using BlazorRoguelike.Core.AI;
 using BlazorRoguelike.Core.Utils;
 
@@ -62,18 +63,19 @@ namespace BlazorRoguelike.Web.Game
             return _tiles[row, col];
         }
 
-        public Path<TileInfo> FindPath(TileInfo start, TileInfo destination)
+        public async Task<Path<TileInfo>> FindPathAsync(TileInfo start, TileInfo destination)
         {
             if (null == start || null == destination)
                 return Path<TileInfo>.Empty;
 
             if (start == destination)            
-                return new Path<TileInfo>(new[]{ destination});            
+                return new Path<TileInfo>(new[] { destination });
 
-            return Pathfinder.FindPath(start, destination,
-                           _distanceFunc,
-                           _estimateFunc,
-                           _findNeighboursFunc);          
+            return await Pathfinder.FindPathAsync(start, destination,
+                                                   _distanceFunc,
+                                                   _estimateFunc,
+                                                   _findNeighboursFunc)
+                            .ConfigureAwait(false);
         }
         
         public TileInfo[] GetNeighbours(TileInfo tile, Predicate<TileInfo> filter)
