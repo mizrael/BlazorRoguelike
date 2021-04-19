@@ -17,7 +17,6 @@ namespace BlazorRoguelike.Web.Game.Scenes
         private readonly IAssetsResolver _assetsResolver;
         private Map _map;
         private MapRenderComponent _mapRenderer;
-        private GameObject _movementCursor;
 
         #endregion "private members"
 
@@ -45,7 +44,7 @@ namespace BlazorRoguelike.Web.Game.Scenes
         {
             var inputService = this.Game.GetService<InputService>();
 
-            var cursor = new GameObject();
+            var cursor = new GameObject(this);
             var transform = cursor.Components.Add<TransformComponent>();
 
             var renderer = cursor.Components.Add<SpriteRenderComponent>();
@@ -73,18 +72,18 @@ namespace BlazorRoguelike.Web.Game.Scenes
         {
             var inputService = this.Game.GetService<InputService>();
 
-            _movementCursor = new GameObject();
-            var transform = _movementCursor.Components.Add<TransformComponent>();
+            var movementCursor = new GameObject(this, ObjectNames.MovementCursor);
+            var transform = movementCursor.Components.Add<TransformComponent>();
 
-            var renderer = _movementCursor.Components.Add<SpriteRenderComponent>();
+            var renderer = movementCursor.Components.Add<SpriteRenderComponent>();
             var spriteSheet = _assetsResolver.Get<SpriteSheet>("assets/tilesets/dungeon4.json");
             renderer.Sprite = spriteSheet.GetSprite("cursor-move");
             renderer.LayerIndex = (int)RenderLayers.UI;
 
-            var lambda = _movementCursor.Components.Add<LambdaComponent>();
+            var lambda = movementCursor.Components.Add<LambdaComponent>();
             lambda.OnUpdate = (_, g) =>
             {
-                if (!_movementCursor.Enabled)
+                if (!movementCursor.Enabled)
                     return ValueTask.CompletedTask;
 
                 transform.Local.Scale.Y = transform.Local.Scale.X = 1f + MathF.Sin(g.GameTime.TotalMilliseconds * 0.005f) * 0.5f;
@@ -92,9 +91,9 @@ namespace BlazorRoguelike.Web.Game.Scenes
                 return ValueTask.CompletedTask;
             };
 
-            _movementCursor.Enabled = false;
+            movementCursor.Enabled = false;
 
-            this.Root.AddChild(_movementCursor);
+            this.Root.AddChild(movementCursor);
         }
 
         private async ValueTask InitMap()
@@ -110,7 +109,7 @@ namespace BlazorRoguelike.Web.Game.Scenes
             offscreenRenderer.Map = _map;
             offscreenRenderer.Tileset = _assetsResolver.Get<SpriteSheet>("assets/tilesets/dungeon4.json");
 
-            var map = new GameObject();
+            var map = new GameObject(this, ObjectNames.Map);
             map.Components.Add<TransformComponent>();
             _mapRenderer = map.Components.Add<MapRenderComponent>();
             _mapRenderer.OffscreenRenderer = offscreenRenderer;
@@ -128,7 +127,7 @@ namespace BlazorRoguelike.Web.Game.Scenes
         {
             var playerStartTile = _map.GetRandomEmptyTile();
 
-            var player = new GameObject();
+            var player = new GameObject(this, ObjectNames.Player);
             var transform = player.Components.Add<TransformComponent>();
             transform.Local.Position = _mapRenderer.GetTilePos(playerStartTile);
 
@@ -137,16 +136,15 @@ namespace BlazorRoguelike.Web.Game.Scenes
             renderer.Sprite = spriteSheet.GetSprite("player-base");
             renderer.LayerIndex = (int)RenderLayers.Player;
 
-            var brain = player.Components.Add<PlayerBrain>();
-            brain.MapRenderer = _mapRenderer;
-            brain.MovementCursor = _movementCursor;
+            player.Components.Add<PathFollower>();
+            player.Components.Add<PlayerBrain>();
 
             this.Root.AddChild(player);
         }
 
         private void InitUI()
         {
-            var ui = new GameObject();
+            var ui = new GameObject(this);
 
             var debugStats = ui.Components.Add<DebugStatsUIComponent>();
             debugStats.LayerIndex = (int)RenderLayers.UI;

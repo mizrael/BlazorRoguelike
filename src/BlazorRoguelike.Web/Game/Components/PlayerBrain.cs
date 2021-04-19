@@ -1,20 +1,19 @@
 using BlazorRoguelike.Core;
+using BlazorRoguelike.Core.AI.FSM;
 using BlazorRoguelike.Core.Components;
 using BlazorRoguelike.Core.GameServices;
+using BlazorRoguelike.Web.Game.AI;
 using System.Threading.Tasks;
-using BlazorRoguelike.Web.Game.Scenes;
-using BlazorRoguelike.Core.Utils;
-using System.Numerics;
-using BlazorRoguelike.Core.AI;
 
 namespace BlazorRoguelike.Web.Game.Components
 {
-    public class PlayerBrain : Component
+    public class PlayerBrain : FSMBrain
     {
-        private TransformComponent _transform;
         private InputService _inputService;
-        private Path<TileInfo> _path;
-        private TileInfo _currPathNode;
+        private MapRenderComponent _mapRenderer;
+        private GameObject _movementCursor;
+
+        private readonly PlayerStatePicker _statePicker = new();
 
         private PlayerBrain(GameObject owner) : base(owner)
         {
@@ -22,7 +21,26 @@ namespace BlazorRoguelike.Web.Game.Components
 
         protected override ValueTask Init(GameContext game)
         {
-            _transform = this.Owner.Components.Get<TransformComponent>();
+            var map = game.SceneManager.Current.FindGameObjectByName(ObjectNames.Map);
+            _mapRenderer = map.Components.Get<MapRenderComponent>();
+
+            _movementCursor = game.SceneManager.Current.FindGameObjectByName(ObjectNames.MovementCursor);
+
+            var pathFollower = this.Owner.Components.Get<PathFollower>();
+            pathFollower.OnStartWalking += (_, from, to) =>
+            {
+                var tilePos = _mapRenderer.GetTilePos(to);
+                _movementCursor.Components.Get<TransformComponent>().Local.Position = tilePos;
+                _movementCursor.Enabled = true;
+            };
+            pathFollower.OnArrived += _ =>
+            {
+                _movementCursor.Enabled = false;
+
+                var newState = new AI.States.Idle(this.Owner);
+                _statePicker.SetState(newState);
+            };
+
             _inputService = game.GetService<InputService>();
 
             _inputService.Mouse.OnButtonStateChanged += (btn, state, oldState) =>
@@ -32,48 +50,20 @@ namespace BlazorRoguelike.Web.Game.Components
 
                 if (!state.IsClicked && oldState.IsClicked)
                 {
-                    var startTile = MapRenderer.GetTileAt(_transform.Local.Position);
-                    var endTile = MapRenderer.GetTileAt(_inputService.Mouse.X, _inputService.Mouse.Y);
-                    _path = MapRenderer.Map.FindPath(startTile, endTile);
+                    _movementCursor.Enabled = false;
 
-                    if(_path.Any()){
-                        var tilePos = MapRenderer.GetTilePos(endTile);
-                        MovementCursor.Components.Get<TransformComponent>().Local.Position = tilePos;
-                        MovementCursor.Enabled = true;
-                    }
+                    var destination = _mapRenderer.GetTileAt(_inputService.Mouse.X, _inputService.Mouse.Y);
+                    if (!destination.IsWalkable)
+                        return;
+
+                    var newState = new AI.States.FollowPath(this.Owner, destination);
+                    _statePicker.SetState(newState);
                 }
             };
 
             return ValueTask.CompletedTask;
         }
 
-        protected override async ValueTask UpdateCore(GameContext game)
-        {
-            if (_path is null || (!_path.Any() && _currPathNode is null))
-                return;
-            _currPathNode = _currPathNode ?? _path.Next();
-
-            var tilePos = MapRenderer.GetTilePos(_currPathNode);
-            var newPos = Vector2Utils.MoveTowards(_transform.World.Position, tilePos, Speed);
-            _transform.Local.Position = newPos;
-
-            var dist = Vector2.DistanceSquared(newPos, tilePos);
-            if (dist < Speed)
-            {
-                _currPathNode = null;                
-                _transform.Local.Position = tilePos;
-
-                if(!_path.Any())
-                {
-                    _path = null;
-                    MovementCursor.Enabled = false;
-                }
-            }
-        }
-
-        public MapRenderComponent MapRenderer;
-        public float Speed = 1.5f;
-
-        public GameObject MovementCursor;
+        protected override IStatePicker InitStatePicker() => _statePicker;
     }
 }
