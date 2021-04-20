@@ -14,17 +14,19 @@ namespace BlazorRoguelike.Web.Game.Scenes
 {
     public class PlayScene : Scene
     {
-        #region "private members"
+        #region private members
 
         private readonly IAssetsResolver _assetsResolver;
+        private readonly CollisionService _collisionService;
         private Map _map;
         private MapRenderComponent _mapRenderer;
 
-        #endregion "private members"
+        #endregion private members
 
-        public PlayScene(GameContext game, IAssetsResolver assetsResolver) : base(game)
+        public PlayScene(GameContext game, IAssetsResolver assetsResolver, CollisionService collisionService) : base(game)
         {
             _assetsResolver = assetsResolver;
+            _collisionService = collisionService;
         }
 
         protected override async ValueTask EnterCore()
@@ -110,7 +112,7 @@ namespace BlazorRoguelike.Web.Game.Scenes
             var canvas = await this.Game.Display.CanvasManager.CreateCanvas("map", new CanvasOptions() { Hidden = true });
             var canvasContext = await canvas.CreateCanvas2DAsync();
             var tileset = _assetsResolver.Get<SpriteSheet>("assets/tilesets/dungeon4.json");
-            var offscreenRenderer = new OffscreenMapRenderer(canvasContext, tileset);            
+            var offscreenRenderer = new OffscreenMapRenderer(canvasContext, tileset);
             offscreenRenderer.Map = _map;
 
             var map = new GameObject(this, ObjectNames.Map);
@@ -126,7 +128,12 @@ namespace BlazorRoguelike.Web.Game.Scenes
 
             this.Root.AddChild(map);
 
-            foreach(var item in _map.Objects)
+            InitMapObjects(tileset, map);
+        }
+
+        private void InitMapObjects(SpriteSheet tileset, GameObject map)
+        {
+            foreach (var item in _map.Objects)
             {
                 if (string.IsNullOrWhiteSpace(item.mapObject.SpriteName))
                     continue;
@@ -135,20 +142,29 @@ namespace BlazorRoguelike.Web.Game.Scenes
                 if (null == sprite)
                     continue;
 
-                var mapObject = new GameObject(this);
+                var mapObject = new GameObject(this);          
+                
                 var transform = mapObject.Components.Add<TransformComponent>();
                 transform.Local.Position = _mapRenderer.GetTilePos(item.tile);
+
                 var renderer = mapObject.Components.Add<SpriteRenderComponent>();
                 renderer.Sprite = sprite;
+
+                var bbox = mapObject.Components.Add<BoundingBoxComponent>();
+                bbox.SetSize(sprite.Bounds.Size);
+
+                _collisionService.RegisterCollider(bbox);
+
                 switch (item.mapObject.Type)
                 {
                     case MapObjectType.Consumable:
                         renderer.LayerIndex = (int)RenderLayers.Items;
+                        mapObject.Components.Add<GroundItemBrain>();
                         break;
                     case MapObjectType.Enemy:
                         renderer.LayerIndex = (int)RenderLayers.Enemies;
                         break;
-                }                 
+                }
 
                 map.AddChild(mapObject);
             }
@@ -159,6 +175,7 @@ namespace BlazorRoguelike.Web.Game.Scenes
             var playerStartTile = _map.GetRandomEmptyTile();
 
             var player = new GameObject(this, ObjectNames.Player);
+
             var transform = player.Components.Add<TransformComponent>();
             transform.Local.Position = _mapRenderer.GetTilePos(playerStartTile);
 
@@ -166,6 +183,11 @@ namespace BlazorRoguelike.Web.Game.Scenes
             var spriteSheet = _assetsResolver.Get<SpriteSheet>("assets/tilesets/dungeon4.json");
             renderer.Sprite = spriteSheet.GetSprite("player-base");
             renderer.LayerIndex = (int)RenderLayers.Player;
+
+            var bbox = player.Components.Add<BoundingBoxComponent>();
+            bbox.SetSize(renderer.Sprite.Bounds.Size);
+
+            _collisionService.RegisterCollider(bbox);
 
             player.Components.Add<PathFollower>();
             player.Components.Add<PlayerBrain>();

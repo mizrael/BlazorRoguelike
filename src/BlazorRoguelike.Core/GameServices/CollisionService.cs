@@ -46,7 +46,7 @@ namespace BlazorRoguelike.Core.GameServices
             var colliders = FindAllColliders();
             foreach (var collider in colliders)
             {
-                Add(collider);
+                RegisterCollider(collider);
             }
         }
 
@@ -123,7 +123,7 @@ namespace BlazorRoguelike.Core.GameServices
             return ValueTask.CompletedTask;
         }
 
-        public void Add(BoundingBoxComponent collider)
+        public void RegisterCollider(BoundingBoxComponent collider)
         {
             collider.OnPositionChanged -= CheckCollisions;
             collider.OnPositionChanged += CheckCollisions;

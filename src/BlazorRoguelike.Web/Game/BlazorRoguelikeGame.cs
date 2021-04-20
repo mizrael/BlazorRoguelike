@@ -4,6 +4,7 @@ using BlazorRoguelike.Core.Assets;
 using BlazorRoguelike.Core.GameServices;
 using BlazorRoguelike.Web.Game.GameServices;
 using BlazorRoguelike.Core.Web.Components;
+using System.Drawing;
 
 namespace BlazorRoguelike.Web.Game
 {
@@ -23,7 +24,10 @@ namespace BlazorRoguelike.Web.Game
 
         protected override async ValueTask Init()
         {
-            var playScene = new Scenes.PlayScene(this, _assetsResolver);
+            var collisionService = new CollisionService(this, new Size(64, 64));
+            this.AddService(collisionService);
+
+            var playScene = new Scenes.PlayScene(this, _assetsResolver, collisionService);
             this.SceneManager.AddScene(SceneNames.Play, playScene);
 
             await this.SceneManager.SetCurrentScene(SceneNames.Play);
