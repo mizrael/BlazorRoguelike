@@ -1,6 +1,7 @@
 ﻿using BlazorRoguelike.Core;
 using BlazorRoguelike.Core.AI.FSM;
 using BlazorRoguelike.Web.Game.Components;
+using BlazorRoguelike.Web.Game.Mechanics;
 
 namespace BlazorRoguelike.Web.Game.AI.States
 {

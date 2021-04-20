@@ -7,6 +7,7 @@ using Blazor.Extensions;
 using BlazorRoguelike.Web.Game.Components;
 using BlazorRoguelike.Core.Web.Components;
 using System;
+using BlazorRoguelike.Web.Game.Mechanics;
 
 namespace BlazorRoguelike.Web.Game.Scenes
 {

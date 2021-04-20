@@ -4,6 +4,7 @@ using BlazorRoguelike.Core;
 using BlazorRoguelike.Core.AI;
 using BlazorRoguelike.Core.Components;
 using BlazorRoguelike.Core.Utils;
+using BlazorRoguelike.Web.Game.Mechanics;
 
 namespace BlazorRoguelike.Web.Game.Components
 {
