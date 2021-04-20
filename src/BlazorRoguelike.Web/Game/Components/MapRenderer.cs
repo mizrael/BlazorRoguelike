@@ -25,7 +25,7 @@ namespace BlazorRoguelike.Web.Game.Components
         {
             await this.OffscreenRenderer.Render();
 
-            await context.DrawImageAsync(this.OffscreenRenderer.Canvas.Canvas, 0, 0).ConfigureAwait(false);
+            await context.DrawImageAsync(this.OffscreenRenderer.Image, 0, 0).ConfigureAwait(false);
         }
 
         public TileInfo GetTileAt(Vector2 point)
