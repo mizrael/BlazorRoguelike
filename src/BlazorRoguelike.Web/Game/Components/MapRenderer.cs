@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Blazor.Extensions.Canvas.Canvas2D;
 using BlazorRoguelike.Core;
 using BlazorRoguelike.Core.Components;
-using BlazorRoguelike.Web.Game.Scenes;
 
 namespace BlazorRoguelike.Web.Game.Components
 {

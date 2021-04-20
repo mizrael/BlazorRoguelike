@@ -1,11 +1,8 @@
-using System.Drawing;
 using System.Threading.Tasks;
 using BlazorRoguelike.Core;
 using BlazorRoguelike.Core.Assets;
 using BlazorRoguelike.Core.GameServices;
 using BlazorRoguelike.Web.Game.GameServices;
-using Blazor.Extensions;
-using BlazorRoguelike.Web.Shared;
 using BlazorRoguelike.Core.Web.Components;
 
 namespace BlazorRoguelike.Web.Game

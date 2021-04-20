@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace BlazorRoguelike.Core.AI.FSM
+﻿namespace BlazorRoguelike.Core.AI.FSM
 {
-	public abstract class State
+    public abstract class State
 	{
 		public State(GameObject owner)
 		{
