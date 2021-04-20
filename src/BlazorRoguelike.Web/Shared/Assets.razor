@@ -39,7 +39,7 @@
         _assetsToLoad = items.Length;
 
         var tasks = items.Select(Load).ToArray();
-        await Task.WhenAll(tasks);        
+        await Task.WhenAll(tasks);
     }
 
     private async Task Load(Core.Assets.AssetMeta item){
@@ -52,6 +52,12 @@
             asset = await this.AssetsResolver.Load<Core.Assets.AnimationCollection>(item);
         else if (item.Type == "sound")
             asset = await this.AssetsResolver.Load<Core.Assets.Sound>(item);
+        else if (item.Type == "map-objects")
+        {
+            // nothing to render here
+            asset = await this.AssetsResolver.Load<Game.Assets.MapObjects>(item);
+            await OnAssetLoaded();
+        }
 
         if (null != asset)
             _items.Add(new (asset, item));

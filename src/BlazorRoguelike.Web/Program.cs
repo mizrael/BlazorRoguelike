@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using BlazorRoguelike.Core.Assets;
 using BlazorRoguelike.Core.Assets.Loaders;
+using BlazorRoguelike.Web.Game.Assets;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,7 +22,8 @@ namespace BlazorRoguelike.Web
             builder.Services.AddSingleton<IAssetLoader<AnimationCollection>, AnimationsAssetLoader>();
             builder.Services.AddSingleton<IAssetLoader<SpriteSheet>, SpriteSheetAssetLoader>();
             builder.Services.AddSingleton<IAssetLoader<Sound>, SoundAssetLoader>();
-            
+            builder.Services.AddSingleton<IAssetLoader<MapObjects>, MapObjectsLoader>();
+
             builder.Services.AddSingleton<IAssetLoaderFactory>(ctx =>
             {
                 var factory = new AssetLoaderFactory();
@@ -30,7 +32,8 @@ namespace BlazorRoguelike.Web
                 factory.Register(ctx.GetRequiredService<IAssetLoader<SpriteSheet>>());
                 factory.Register(ctx.GetRequiredService<IAssetLoader<AnimationCollection>>());
                 factory.Register(ctx.GetRequiredService<IAssetLoader<Sound>>());
-                
+                factory.Register(ctx.GetRequiredService<IAssetLoader<MapObjects>>());
+
                 return factory;
             });
 

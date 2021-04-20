@@ -8,17 +8,19 @@ namespace BlazorRoguelike.Web.Game.Mechanics
 {
     public class Map
     {
-        private readonly DungeonGenerator.Dungeon _dungeon;
+        #region members
+
         private readonly TileInfo[,] _tiles;
 
         private Func<TileInfo, TileInfo, double> _distanceFunc;
         private Func<TileInfo, TileInfo, double> _estimateFunc;
         private Func<TileInfo, IEnumerable<TileInfo>> _findNeighboursFunc;
 
+        #endregion members
+
         public Map(DungeonGenerator.Dungeon dungeon)
         {
-            _dungeon = dungeon;
-            var cells = _dungeon.ExpandToTiles(4);
+            var cells = dungeon.ExpandToTiles(4);
             Rows = cells.GetLength(0);
             Cols = cells.GetLength(1);
 
@@ -37,10 +39,18 @@ namespace BlazorRoguelike.Web.Game.Mechanics
                 int dy = t2.Col - t1.Col;
                 return Math.Sqrt(dx * dx + dy * dy);
             };
+
+            GenerateMapObjects(dungeon);
         }
+
+        #region properties
 
         public readonly int Rows;
         public readonly int Cols;
+
+        #endregion properties
+
+        #region public methods
 
         public TileInfo GetRandomEmptyTile()
         {
@@ -78,7 +88,21 @@ namespace BlazorRoguelike.Web.Game.Mechanics
                             .ConfigureAwait(false);
         }
 
-        public TileInfo[] GetNeighbours(TileInfo tile, Predicate<TileInfo> filter)
+        #endregion public methods
+
+        #region private methods
+
+        private void GenerateMapObjects(DungeonGenerator.Dungeon dungeon)
+        {
+            var roomsCount = dungeon.Rooms.Count;
+            for(int i = 0; i != roomsCount; ++i)
+            {
+
+            }
+            // TODO
+        }
+
+        private TileInfo[] GetNeighbours(TileInfo tile, Predicate<TileInfo> filter)
         {
             var results = new List<TileInfo>(8);
 
@@ -124,5 +148,9 @@ namespace BlazorRoguelike.Web.Game.Mechanics
 
             return results.ToArray();
         }
+
+        #endregion private methods
     }
+
+    public record MapObject(string Id);
 }

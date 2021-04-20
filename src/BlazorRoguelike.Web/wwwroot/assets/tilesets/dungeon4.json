@@ -126,10 +126,18 @@
       "y": "289",
       "width": "16",
       "height": "16"
-    },{
+    },
+    {
       "name": "player-base",
       "x": "426",
       "y": "0",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "potion",
+      "x": "663",
+      "y": "187",
       "width": "16",
       "height": "16"
     }
