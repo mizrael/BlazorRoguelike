@@ -1,6 +1,17 @@
 ﻿[
   {
     "id": "potion",
-    "sprite": "potion"    
+    "sprite": "potion",
+    "type": "consumable"
+  },
+  {
+    "id": "skeleton",
+    "sprite": "skeleton",
+    "type": "enemy"
+  },
+  {
+    "id": "spider1",
+    "sprite": "spider1",
+    "type": "enemy"
   }
 ]

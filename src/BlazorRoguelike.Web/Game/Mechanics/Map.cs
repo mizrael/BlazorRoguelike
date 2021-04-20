@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using BlazorRoguelike.Core.AI;
 using BlazorRoguelike.Core.Utils;
+using BlazorRoguelike.Web.Game.Assets;
 
 namespace BlazorRoguelike.Web.Game.Mechanics
 {
@@ -16,9 +17,11 @@ namespace BlazorRoguelike.Web.Game.Mechanics
         private Func<TileInfo, TileInfo, double> _estimateFunc;
         private Func<TileInfo, IEnumerable<TileInfo>> _findNeighboursFunc;
 
+        private readonly List<(MapObject, TileInfo)> _mapObjects = new();
+
         #endregion members
 
-        public Map(DungeonGenerator.Dungeon dungeon)
+        public Map(DungeonGenerator.Dungeon dungeon, MapObjects availableMapObjects)
         {
             var cells = dungeon.ExpandToTiles(4);
             Rows = cells.GetLength(0);
@@ -40,13 +43,15 @@ namespace BlazorRoguelike.Web.Game.Mechanics
                 return Math.Sqrt(dx * dx + dy * dy);
             };
 
-            GenerateMapObjects(dungeon);
+            GenerateMapObjects(dungeon, availableMapObjects);
         }
 
         #region properties
 
         public readonly int Rows;
         public readonly int Cols;
+
+        public IEnumerable<(MapObject mapObject, TileInfo tile)> Objects => _mapObjects;
 
         #endregion properties
 
@@ -92,14 +97,21 @@ namespace BlazorRoguelike.Web.Game.Mechanics
 
         #region private methods
 
-        private void GenerateMapObjects(DungeonGenerator.Dungeon dungeon)
+        private void GenerateMapObjects(DungeonGenerator.Dungeon dungeon, MapObjects availableMapObjects)
         {
+            // TODO: improve generator (eg. better randomization, room positioning, etc)
+
             var roomsCount = dungeon.Rooms.Count;
             for(int i = 0; i != roomsCount; ++i)
             {
+                var item = availableMapObjects.GetRandomByType(MapObjectType.Consumable);
+                if(null != item)
+                    _mapObjects.Add((item, GetRandomEmptyTile()));
 
-            }
-            // TODO
+                var enemy = availableMapObjects.GetRandomByType(MapObjectType.Enemy);
+                if (null != enemy)
+                    _mapObjects.Add((enemy, GetRandomEmptyTile()));
+            }            
         }
 
         private TileInfo[] GetNeighbours(TileInfo tile, Predicate<TileInfo> filter)
@@ -152,5 +164,14 @@ namespace BlazorRoguelike.Web.Game.Mechanics
         #endregion private methods
     }
 
-    public record MapObject(string Id);
+    // TODO: this assumes that the item is always rendered using a static sprite and does not allow customization of the tileset.
+    // Consider adding a key/value collection or some inheritance (based on the type perhaps), or a simple flag "is animated"
+    public record MapObject(string Id, MapObjectType Type, string SpriteName);
+
+    public enum MapObjectType
+    {
+        Unknown = 0,
+        Consumable,
+        Enemy
+    }
 }

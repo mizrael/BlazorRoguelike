@@ -8,6 +8,7 @@ using BlazorRoguelike.Web.Game.Components;
 using BlazorRoguelike.Core.Web.Components;
 using System;
 using BlazorRoguelike.Web.Game.Mechanics;
+using BlazorRoguelike.Web.Game.Assets;
 
 namespace BlazorRoguelike.Web.Game.Scenes
 {
@@ -99,14 +100,16 @@ namespace BlazorRoguelike.Web.Game.Scenes
 
         private async ValueTask InitMap()
         {
+            var availableMapObjects = _assetsResolver.Get<MapObjects>("assets/map-objects.json"); ;
+
             var roomGenerator = new DungeonGenerator.RoomGenerator(5, 2, 3, 2, 3);
             var generator = new DungeonGenerator.DungeonGenerator(9, 7, 70, 25, 100, roomGenerator);
             var dungeon = generator.Generate();
-            _map = new Map(dungeon);
+            _map = new Map(dungeon, availableMapObjects);
 
             var canvas = await this.Game.Display.CanvasManager.CreateCanvas("map", new CanvasOptions() { Hidden = true });
             var canvasContext = await canvas.CreateCanvas2DAsync();
-            var tileset = _assetsResolver.Get<SpriteSheet>("assets/tilesets/dungeon4.json"); ;
+            var tileset = _assetsResolver.Get<SpriteSheet>("assets/tilesets/dungeon4.json");
             var offscreenRenderer = new OffscreenMapRenderer(canvasContext, tileset);            
             offscreenRenderer.Map = _map;
 
@@ -122,6 +125,33 @@ namespace BlazorRoguelike.Web.Game.Scenes
             };
 
             this.Root.AddChild(map);
+
+            foreach(var item in _map.Objects)
+            {
+                if (string.IsNullOrWhiteSpace(item.mapObject.SpriteName))
+                    continue;
+
+                var sprite = tileset.GetSprite(item.mapObject.SpriteName);
+                if (null == sprite)
+                    continue;
+
+                var mapObject = new GameObject(this);
+                var transform = mapObject.Components.Add<TransformComponent>();
+                transform.Local.Position = _mapRenderer.GetTilePos(item.tile);
+                var renderer = mapObject.Components.Add<SpriteRenderComponent>();
+                renderer.Sprite = sprite;
+                switch (item.mapObject.Type)
+                {
+                    case MapObjectType.Consumable:
+                        renderer.LayerIndex = (int)RenderLayers.Items;
+                        break;
+                    case MapObjectType.Enemy:
+                        renderer.LayerIndex = (int)RenderLayers.Enemies;
+                        break;
+                }                 
+
+                map.AddChild(mapObject);
+            }
         }
 
         private void InitPlayer()
