@@ -36,11 +36,9 @@ namespace BlazorRoguelike.Web.Game.Scenes
             InitCursor();
             InitMovementCursor();
 
-            InitPlayer();
+            var player = InitPlayer();
+            InitUI(player);
 
-#if DEBUG
-            InitUI();
-#endif
             await base.EnterCore();
         }
 
@@ -171,7 +169,7 @@ namespace BlazorRoguelike.Web.Game.Scenes
             }
         }
 
-        private void InitPlayer()
+        private GameObject InitPlayer()
         {
             var playerStartTile = _map.GetRandomEmptyTile();
 
@@ -191,17 +189,31 @@ namespace BlazorRoguelike.Web.Game.Scenes
 
             player.Components.Add<PathFollowerComponent>();
             player.Components.Add<PlayerBrainComponent>();
-            player.Components.Add<InventoryComponent>();
+            player.Components.Add<PlayerStatsComponent>();
+            player.Components.Add<PlayerInventoryComponent>();
 
             this.Root.AddChild(player);
+
+            return player;
         }
 
-        private void InitUI()
+        private void InitUI(GameObject player)
         {
             var ui = new GameObject(this);
 
+#if DEBUG
             var debugStats = ui.Components.Add<DebugStatsUIComponent>();
-            debugStats.LayerIndex = (int)RenderLayers.UI;
+#endif
+            var spriteSheet = _assetsResolver.Get<SpriteSheet>("assets/tilesets/dungeon4.json");
+
+            var playerUI = ui.Components.Add<PlayerUIComponent>();
+            playerUI.Player = player;
+            playerUI.PotionSprite = spriteSheet.GetSprite("ui-potion3");
+            playerUI.HeartSprites = new[]{
+                spriteSheet.GetSprite("ui-heart1"),
+                spriteSheet.GetSprite("ui-heart2"),
+                spriteSheet.GetSprite("ui-heart3")
+            };
 
             this.Root.AddChild(ui);
         }

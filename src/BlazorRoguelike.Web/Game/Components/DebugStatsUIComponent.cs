@@ -39,7 +39,8 @@ namespace BlazorRoguelike.Web.Game.Components
             y += _lineHeight;
             await context.FillTextAsync(text, x, y).ConfigureAwait(false);
         }
-        public int LayerIndex { get; set; }
-        public bool Hidden { get; set; }
+
+        public int LayerIndex { get; set; } = (int) RenderLayers.UI;
+        public bool Hidden { get; set; } = false;
     }
 }
