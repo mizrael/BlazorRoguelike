@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BlazorRoguelike.Web.Game.Components
 {
-    public class PlayerBrain : FSMBrain
+    public class PlayerBrainComponent : FSMBrainComponent
     {
         private InputService _inputService;
         private MapRenderComponent _mapRenderer;
@@ -15,7 +15,7 @@ namespace BlazorRoguelike.Web.Game.Components
 
         private readonly PlayerStatePicker _statePicker = new();
 
-        private PlayerBrain(GameObject owner) : base(owner)
+        private PlayerBrainComponent(GameObject owner) : base(owner)
         {
         }
 
@@ -26,7 +26,7 @@ namespace BlazorRoguelike.Web.Game.Components
 
             _movementCursor = game.SceneManager.Current.FindGameObjectByName(ObjectNames.MovementCursor);
 
-            var pathFollower = this.Owner.Components.Get<PathFollower>();
+            var pathFollower = this.Owner.Components.Get<PathFollowerComponent>();
             pathFollower.OnStartWalking += (_, from, to) =>
             {
                 var tilePos = _mapRenderer.GetTilePos(to);

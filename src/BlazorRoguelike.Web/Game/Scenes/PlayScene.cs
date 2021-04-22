@@ -102,7 +102,7 @@ namespace BlazorRoguelike.Web.Game.Scenes
 
         private async ValueTask InitMap()
         {
-            var availableMapObjects = _assetsResolver.Get<MapObjects>("assets/map-objects.json"); ;
+            var availableMapObjects = _assetsResolver.Get<MapObjects>("assets/map-objects.json");
 
             var roomGenerator = new DungeonGenerator.RoomGenerator(5, 2, 3, 2, 3);
             var generator = new DungeonGenerator.DungeonGenerator(9, 7, 70, 25, 100, roomGenerator);
@@ -159,7 +159,8 @@ namespace BlazorRoguelike.Web.Game.Scenes
                 {
                     case MapObjectType.Consumable:
                         renderer.LayerIndex = (int)RenderLayers.Items;
-                        mapObject.Components.Add<GroundItemBrain>();
+                        var brain = mapObject.Components.Add<GroundItemBrainComponent>();
+                        brain.Item = item.mapObject;
                         break;
                     case MapObjectType.Enemy:
                         renderer.LayerIndex = (int)RenderLayers.Enemies;
@@ -186,11 +187,11 @@ namespace BlazorRoguelike.Web.Game.Scenes
 
             var bbox = player.Components.Add<BoundingBoxComponent>();
             bbox.SetSize(renderer.Sprite.Bounds.Size);
-
             _collisionService.RegisterCollider(bbox);
 
-            player.Components.Add<PathFollower>();
-            player.Components.Add<PlayerBrain>();
+            player.Components.Add<PathFollowerComponent>();
+            player.Components.Add<PlayerBrainComponent>();
+            player.Components.Add<InventoryComponent>();
 
             this.Root.AddChild(player);
         }

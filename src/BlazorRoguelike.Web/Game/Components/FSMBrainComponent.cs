@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 
 namespace BlazorRoguelike.Web.Game.Components
 {
-    public abstract class FSMBrain : Component
+    public abstract class FSMBrainComponent : Component
     {
         private IStatePicker _statePicker;
 
-        protected FSMBrain(GameObject owner) : base(owner)
+        protected FSMBrainComponent(GameObject owner) : base(owner)
         {
         }
 

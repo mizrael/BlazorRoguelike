@@ -8,7 +8,7 @@ using BlazorRoguelike.Web.Game.Mechanics;
 
 namespace BlazorRoguelike.Web.Game.Components
 {
-    public class PathFollower : Component
+    public class PathFollowerComponent : Component
     {
         private Path<TileInfo> _path;
         private TileInfo _currPathNode;
@@ -17,7 +17,7 @@ namespace BlazorRoguelike.Web.Game.Components
 
         public float Speed = 1.5f; //TODO: create StatsComponent
 
-        public PathFollower(GameObject owner) : base(owner)
+        public PathFollowerComponent(GameObject owner) : base(owner)
         {
         }
 
@@ -74,9 +74,9 @@ namespace BlazorRoguelike.Web.Game.Components
         }
 
         public event OnStartWalkingHandler OnStartWalking;
-        public delegate void OnStartWalkingHandler(PathFollower sender, TileInfo from, TileInfo to);
+        public delegate void OnStartWalkingHandler(PathFollowerComponent sender, TileInfo from, TileInfo to);
 
         public event OnArrivedHandler OnArrived;
-        public delegate void OnArrivedHandler(PathFollower sender);
+        public delegate void OnArrivedHandler(PathFollowerComponent sender);
     }
 }

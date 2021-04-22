@@ -7,11 +7,11 @@ namespace BlazorRoguelike.Web.Game.AI.States
 {
     public class FollowPath : State
     {
-        private PathFollower _pathFollower;
+        private PathFollowerComponent _pathFollower;
 
         public FollowPath(GameObject owner, TileInfo dest) : base(owner)
         {
-            _pathFollower = this.Owner.Components.Get<PathFollower>();
+            _pathFollower = this.Owner.Components.Get<PathFollowerComponent>();
             _pathFollower.OnArrived += _ =>{
                 this.Completed = true;
             };
