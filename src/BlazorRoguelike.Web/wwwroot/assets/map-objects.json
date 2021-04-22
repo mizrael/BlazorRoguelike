@@ -2,7 +2,7 @@
   {
     "id": "potion",
     "sprite": "potion",
-    "type": "consumable"
+    "type": "item"
   },
   {
     "id": "skeleton",
