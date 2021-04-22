@@ -155,7 +155,7 @@ namespace BlazorRoguelike.Web.Game.Scenes
 
                 switch (item.mapObject.Type)
                 {
-                    case MapObjectType.Consumable:
+                    case MapObjectType.Item:
                         renderer.LayerIndex = (int)RenderLayers.Items;
                         var brain = mapObject.Components.Add<GroundItemBrainComponent>();
                         brain.Item = item.mapObject;

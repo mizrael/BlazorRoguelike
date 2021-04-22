@@ -104,7 +104,7 @@ namespace BlazorRoguelike.Web.Game.Mechanics
             var roomsCount = dungeon.Rooms.Count;
             for(int i = 0; i != roomsCount; ++i)
             {
-                var item = availableMapObjects.GetRandomByType(MapObjectType.Consumable);
+                var item = availableMapObjects.GetRandomByType(MapObjectType.Item);
                 if(null != item)
                     _mapObjects.Add((item, GetRandomEmptyTile()));
 
@@ -171,7 +171,7 @@ namespace BlazorRoguelike.Web.Game.Mechanics
     public enum MapObjectType
     {
         Unknown = 0,
-        Consumable,
+        Item,
         Enemy
     }
 }
