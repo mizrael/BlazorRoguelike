@@ -202,7 +202,7 @@ namespace BlazorRoguelike.Web.Game.Scenes
             var ui = new GameObject(this);
 
 #if DEBUG
-            var debugStats = ui.Components.Add<DebugStatsUIComponent>();
+       //     var debugStats = ui.Components.Add<DebugStatsUIComponent>();
 #endif
             var spriteSheet = _assetsResolver.Get<SpriteSheet>("assets/tilesets/dungeon4.json");
 
