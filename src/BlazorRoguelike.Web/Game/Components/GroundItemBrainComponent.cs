@@ -27,8 +27,10 @@ namespace BlazorRoguelike.Web.Game.Components
                 this.Owner.Enabled = false;
                 this.Owner.Parent.RemoveChild(this.Owner);
 
-                if (collidedWith.Owner.Components.TryGet<PlayerInventoryComponent>(out var inventory))                    
-                    inventory.Add(this.Item);
+                if (collidedWith.Owner.Components.TryGet<PlayerInventoryComponent>(out var inventory) &&
+                    inventory.CanAdd(this.Item))                
+                    inventory.Add(this.Item);                
+                    
             };
 
             _transform = Owner.Components.Get<TransformComponent>();
