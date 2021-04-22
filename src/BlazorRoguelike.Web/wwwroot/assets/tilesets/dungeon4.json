@@ -154,6 +154,48 @@
       "y": "85",
       "width": "16",
       "height": "16"
+    },
+    {
+      "name": "ui-potion1",
+      "x": "680",
+      "y": "187",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "ui-potion2",
+      "x": "697",
+      "y": "187",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "ui-potion3",
+      "x": "714",
+      "y": "187",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "ui-heart1",
+      "x": "680",
+      "y": "170",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "ui-heart2",
+      "x": "697",
+      "y": "170",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "ui-heart3",
+      "x": "714",
+      "y": "170",
+      "width": "16",
+      "height": "16"
     }
   ]
 }
