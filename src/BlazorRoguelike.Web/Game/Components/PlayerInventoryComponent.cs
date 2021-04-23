@@ -22,7 +22,7 @@ namespace BlazorRoguelike.Web.Game.Components
         public bool CanAdd(MapObject item)
         {
             if (item.Id == "potion")
-                return this.Potions <= MaxPotions;
+                return this.Potions < MaxPotions;
 
             return false;
         }

@@ -21,16 +21,14 @@ namespace BlazorRoguelike.Web.Game.Components
             var boundingBox = Owner.Components.Get<BoundingBoxComponent>();
             boundingBox.OnCollision += (sender, collidedWith) =>
             {
-                if (!collidedWith.Owner.Components.TryGet<PlayerBrainComponent>(out var _))
+                if (!collidedWith.Owner.Components.TryGet<PlayerInventoryComponent>(out var inventory) ||
+                    !inventory.CanAdd(this.Item))   
                     return;
 
                 this.Owner.Enabled = false;
                 this.Owner.Parent.RemoveChild(this.Owner);
 
-                if (collidedWith.Owner.Components.TryGet<PlayerInventoryComponent>(out var inventory) &&
-                    inventory.CanAdd(this.Item))                
-                    inventory.Add(this.Item);                
-                    
+                inventory.Add(this.Item);                
             };
 
             _transform = Owner.Components.Get<TransformComponent>();
