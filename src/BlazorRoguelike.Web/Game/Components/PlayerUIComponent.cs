@@ -8,10 +8,8 @@ namespace BlazorRoguelike.Web.Game.Components
 {
     public class PlayerUIComponent : Component, IRenderable
     {
-        const int itemMarginX = 10;
-        const int rightMargin = 10;
-        const int heartsTopMargin = 20;
-        const int potionsTopMargin = 40;
+        private const int leftMargin = 20;
+        private const int bottomMargin = 50;
 
         private PlayerStatsComponent _playerStatsComponent;
         private PlayerInventoryComponent _playerInventoryComponent;
@@ -33,54 +31,47 @@ namespace BlazorRoguelike.Web.Game.Components
             if (!this.Owner.Enabled || this.Hidden)
                 return;
 
+            var y = game.Display.Size.Height - bottomMargin;
+
+            await context.SaveAsync();
+            await context.TranslateAsync(leftMargin, y);
+
             await RenderHearts(game, context);
             await RenderPotions(game, context);
+
+            await context.RestoreAsync();
         }
 
         private async ValueTask RenderPotions(GameContext game, Canvas2DContext context)
         {
-            var startX = game.Display.Size.Width - rightMargin;
-            var x = PotionSprite.Bounds.Width + itemMarginX;
+            var text = $"{_playerInventoryComponent.Potions}";
 
-            await context.SaveAsync();            
-            await context.TranslateAsync(startX, potionsTopMargin);
+            await context.TranslateAsync(0, HeartSprite.Bounds.Height);
 
-            for (int i = 0; i < _playerInventoryComponent.Potions; i++)
-                await RenderSprite(context, -x, PotionSprite);
+            await RenderSprite(context, PotionSprite);
 
-            await context.RestoreAsync();
+            await RenderText(context, text, PotionSprite.Bounds.Width);
         }
+
 
         private async ValueTask RenderHearts(GameContext game, Canvas2DContext context)
         {            
-            int statesCount = this.HeartSprites.Length - 1;
-            int fullHeartsCount = (int)System.MathF.Floor((float)_playerStatsComponent.Health / statesCount);
-            
-            int diff = _playerStatsComponent.MaxHealth - _playerStatsComponent.Health;
-            float div = (float)diff / statesCount;
-            float diff2 = System.MathF.Ceiling(div) - div;
-            int halfHeartsCount = (int)System.MathF.Ceiling(diff2);
-            int emptyHeartsCount = (int)System.MathF.Floor(div);
-                        
-            var startX = game.Display.Size.Width - rightMargin;            
-            var x = HeartSprites[0].Bounds.Width + itemMarginX;
+            var text = $"{_playerStatsComponent.Health}/{_playerStatsComponent.MaxHealth}";
 
-            await context.SaveAsync();
-            await context.TranslateAsync(startX, heartsTopMargin);            
+            await RenderSprite(context, HeartSprite);
 
-            for (int i = 0; i < fullHeartsCount; i++)                         
-                await RenderSprite(context, -x, HeartSprites[2]);
-            for (int i = 0; i < halfHeartsCount; i++)
-                await RenderSprite(context, -x, HeartSprites[1]);
-            for (int i = 0; i < emptyHeartsCount; i++)
-                await RenderSprite(context, -x, HeartSprites[0]);
-
-            await context.RestoreAsync();
+            await RenderText(context, text, HeartSprite.Bounds.Width);
+        }
+        private static async Task RenderText(Canvas2DContext context, string text, int x)
+        {
+            await context.SetFillStyleAsync("#fff");
+            await context.SetFontAsync("18px verdana");
+            await context.SetTextBaselineAsync(TextBaseline.Middle);
+            await context.FillTextAsync(text, x, 0);
         }
 
-        private static async Task RenderSprite(Canvas2DContext context, int x, SpriteBase sprite)
+        private static async Task RenderSprite(Canvas2DContext context, SpriteBase sprite)
         {
-            await context.TranslateAsync(x, 0);
             await context.DrawImageAsync(sprite.ElementRef,
                 sprite.Bounds.X, sprite.Bounds.Y,
                 sprite.Bounds.Width, sprite.Bounds.Height,
@@ -91,7 +82,7 @@ namespace BlazorRoguelike.Web.Game.Components
         public int LayerIndex { get; set; } = (int)RenderLayers.UI;
         public bool Hidden { get; set; } = false;
         public GameObject Player { get; set; }   
-        public SpriteBase[] HeartSprites { get; set; }
+        public SpriteBase HeartSprite { get; set; }
         public SpriteBase PotionSprite { get; set; }
     }
 }
