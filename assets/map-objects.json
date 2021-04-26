@@ -1,0 +1,17 @@
+﻿[
+  {
+    "id": "potion",
+    "sprite": "potion",
+    "type": "item"
+  },
+  {
+    "id": "skeleton",
+    "sprite": "skeleton",
+    "type": "enemy"
+  },
+  {
+    "id": "spider1",
+    "sprite": "spider1",
+    "type": "enemy"
+  }
+]

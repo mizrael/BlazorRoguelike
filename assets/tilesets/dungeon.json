@@ -1,0 +1,26 @@
+{
+  "imagePath": "assets/tilesets/dungeon.png",
+  "sprites": [
+    {
+      "name": "floor",
+      "x": "112",
+      "y": "0",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "door",
+      "x": "128",
+      "y": "48",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "wallse",
+      "x": "0",
+      "y": "80",
+      "width": "16",
+      "height": "16"
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "imagePath": "assets/tilesets/dungeon2.png",
+  "sprites": [
+    {
+      "name": "floor",
+      "x": "0",
+      "y": "80",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "door",
+      "x": "0",
+      "y": "112",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "wallne",
+      "x": "0",
+      "y": "32",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "wallns",
+      "x": "0",
+      "y": "16",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "wall",
+      "x": "112",
+      "y": "0",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "wallse",
+      "x": "0",
+      "y": "0",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "wallso",
+      "x": "32",
+      "y": "0",
+      "width": "16",
+      "height": "16"
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "imagePath": "assets/tilesets/dungeon3.png",
+  "sprites": [
+    {
+      "name": "floor",
+      "x": "16",
+      "y": "64",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "void",
+      "x": "32",
+      "y": "16",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "wall",
+      "x": "0",
+      "y": "0",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "walleo",
+      "x": "16",
+      "y": "32",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "wallne",
+      "x": "32",
+      "y": "32",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "wallno",
+      "x": "64",
+      "y": "32",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "wallns",
+      "x": "64",
+      "y": "0",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "wallse",
+      "x": "64",
+      "y": "16",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "wallso",
+      "x": "80",
+      "y": "16",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "walleso",
+      "x": "0",
+      "y": "16",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "wallnes",
+      "x": "80",
+      "y": "32",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "wallneo",
+      "x": "32",
+      "y": "32",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "wallnso",
+      "x": "64",
+      "y": "48",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "wallneso",
+      "x": "80",
+      "y": "48",
+      "width": "16",
+      "height": "16"
+    }
+  ]
+}
