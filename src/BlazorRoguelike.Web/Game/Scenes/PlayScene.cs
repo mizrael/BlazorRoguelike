@@ -54,18 +54,9 @@ namespace BlazorRoguelike.Web.Game.Scenes
             renderer.Sprite = spriteSheet.GetSprite("cursor-x");
             renderer.LayerIndex = (int)RenderLayers.UI;
 
-            var lambda = cursor.Components.Add<LambdaComponent>();
-            lambda.OnUpdate = (_, g) =>
-            {
-                transform.Local.Position.X = inputService.Mouse.X;
-                transform.Local.Position.Y = inputService.Mouse.Y;
-
-                var tile = _mapRenderer.GetTileAt(transform.Local.Position);
-                var spriteName = tile.IsWalkable ? "cursor" : "cursor-x";
-                renderer.Sprite = spriteSheet.GetSprite(spriteName);
-
-                return ValueTask.CompletedTask;
-            };
+            var brain = cursor.Components.Add<CursorBrainComponent>();
+            brain.WalkableSprite = spriteSheet.GetSprite("cursor");
+            brain.CursorXSprite = spriteSheet.GetSprite("cursor-x");
 
             this.Root.AddChild(cursor);
         }
@@ -140,32 +131,32 @@ namespace BlazorRoguelike.Web.Game.Scenes
                 if (null == sprite)
                     continue;
 
-                var mapObject = new GameObject(this);          
+                var entity = new GameObject(this);          
                 
-                var transform = mapObject.Components.Add<TransformComponent>();
+                var transform = entity.Components.Add<TransformComponent>();
                 transform.Local.Position = _mapRenderer.GetTilePos(item.tile);
 
-                var renderer = mapObject.Components.Add<SpriteRenderComponent>();
+                var renderer = entity.Components.Add<SpriteRenderComponent>();
                 renderer.Sprite = sprite;
 
-                var bbox = mapObject.Components.Add<BoundingBoxComponent>();
+                var bbox = entity.Components.Add<BoundingBoxComponent>();
                 bbox.SetSize(sprite.Bounds.Size);
-
                 _collisionService.RegisterCollider(bbox);
 
                 switch (item.mapObject.Type)
                 {
                     case MapObjectType.Item:
                         renderer.LayerIndex = (int)RenderLayers.Items;
-                        var brain = mapObject.Components.Add<GroundItemBrainComponent>();
+                        var brain = entity.Components.Add<GroundItemBrainComponent>();
                         brain.Item = item.mapObject;
                         break;
                     case MapObjectType.Enemy:
                         renderer.LayerIndex = (int)RenderLayers.Enemies;
+                        entity.Components.Add<EnemyBrainComponent>();
                         break;
                 }
 
-                map.AddChild(mapObject);
+                map.AddChild(entity);
             }
         }
 
