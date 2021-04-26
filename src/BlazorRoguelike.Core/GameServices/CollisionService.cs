@@ -46,8 +46,8 @@ namespace BlazorRoguelike.Core.GameServices
 
             _bucketsByCollider.Clear();
 
-            var colliders = FindAllColliders();
-            foreach (var collider in colliders)
+            var collidersInScene = FindAllCollidersInScene();
+            foreach (var collider in collidersInScene)
             {
                 RegisterCollider(collider);
             }
@@ -96,7 +96,7 @@ namespace BlazorRoguelike.Core.GameServices
                 }
         }
 
-        private IEnumerable<BoundingBoxComponent> FindAllColliders()
+        private IEnumerable<BoundingBoxComponent> FindAllCollidersInScene()
         {
             var scenegraph = _game.SceneManager.Current;
             var colliders = new List<BoundingBoxComponent>();
