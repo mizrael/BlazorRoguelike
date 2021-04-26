@@ -32,5 +32,7 @@ namespace BlazorRoguelike.Core.GameServices
                 bbox.CollideWith(collider);
             }
         }
+
+        public IEnumerable<BoundingBoxComponent> Colliders => _colliders;
     }
 }

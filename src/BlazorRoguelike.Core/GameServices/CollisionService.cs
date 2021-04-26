@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Threading.Tasks;
 using BlazorRoguelike.Core.Components;
 
@@ -13,6 +14,8 @@ namespace BlazorRoguelike.Core.GameServices
         private CollisionBucket[,] _buckets;
         private readonly Size _bucketSize;
         private readonly Dictionary<int, IList<CollisionBucket>> _bucketsByCollider = new();
+
+        private readonly Queue<BoundingBoxComponent> _toAdd = new();
 
         public CollisionService(GameContext game, Size bucketSize)
         {
@@ -116,18 +119,38 @@ namespace BlazorRoguelike.Core.GameServices
                     FindAllColliders(child, colliders);
         }
 
+        public IEnumerable<BoundingBoxComponent> FindColliders(int x, int y)
+        {
+            var rows = _buckets.GetLength(0);
+            var cols = _buckets.GetLength(1);
+            var col = (int)(cols * ((float)x / _game.Display.Size.Width));
+            var row = (int)(rows * ((float)y / _game.Display.Size.Height));
+
+            return (row >= 0 && row < rows && col >= 0 && col < cols) ?
+                _buckets[row, col].Colliders : Enumerable.Empty<BoundingBoxComponent>();
+        }
+
         public ValueTask Step()
         {
             if (null == _buckets)
                 BuildBuckets();
+
+            while (_toAdd.Any())
+            {
+                var collider = _toAdd.Dequeue();
+                collider.OnPositionChanged -= CheckCollisions;
+                if (!collider.IsStatic)
+                    collider.OnPositionChanged += CheckCollisions;
+
+                RefreshColliderBuckets(collider);
+            }
+
             return ValueTask.CompletedTask;
         }
 
         public void RegisterCollider(BoundingBoxComponent collider)
         {
-            collider.OnPositionChanged -= CheckCollisions;
-            collider.OnPositionChanged += CheckCollisions;
-            RefreshColliderBuckets(collider);
+            _toAdd.Enqueue(collider);         
         }
     }
 }

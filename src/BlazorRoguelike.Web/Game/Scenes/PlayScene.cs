@@ -44,10 +44,8 @@ namespace BlazorRoguelike.Web.Game.Scenes
 
         private void InitCursor()
         {
-            var inputService = this.Game.GetService<InputService>();
-
             var cursor = new GameObject(this);
-            var transform = cursor.Components.Add<TransformComponent>();
+            cursor.Components.Add<TransformComponent>();
 
             var renderer = cursor.Components.Add<SpriteRenderComponent>();
             var spriteSheet = _assetsResolver.Get<SpriteSheet>("assets/tilesets/dungeon4.json");
@@ -56,7 +54,8 @@ namespace BlazorRoguelike.Web.Game.Scenes
 
             var brain = cursor.Components.Add<CursorBrainComponent>();
             brain.WalkableSprite = spriteSheet.GetSprite("cursor");
-            brain.CursorXSprite = spriteSheet.GetSprite("cursor-x");
+            brain.ForbiddenSprite = spriteSheet.GetSprite("cursor-x");
+            brain.SelectionSprite = spriteSheet.GetSprite("cursor-sel");
 
             this.Root.AddChild(cursor);
         }
@@ -146,6 +145,8 @@ namespace BlazorRoguelike.Web.Game.Scenes
                 switch (item.mapObject.Type)
                 {
                     case MapObjectType.Item:
+                        bbox.IsStatic = true;
+
                         renderer.LayerIndex = (int)RenderLayers.Items;
                         var brain = entity.Components.Add<GroundItemBrainComponent>();
                         brain.Item = item.mapObject;

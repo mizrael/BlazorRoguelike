@@ -21,6 +21,12 @@ namespace BlazorRoguelike.Core.Components
         protected override ValueTask Init(GameContext game)
         {
             _transform = Owner.Components.Get<TransformComponent>();
+
+            var x = (int)_transform.World.Position.X - _halfSize.Width;
+            var y = (int)_transform.World.Position.Y - _halfSize.Height;
+            _bounds.X = x;
+            _bounds.Y = y;
+
             return ValueTask.CompletedTask;
         }
 
@@ -41,7 +47,7 @@ namespace BlazorRoguelike.Core.Components
             _bounds.X = x;
             _bounds.Y = y;
 
-            if (changed)
+            if (changed && !IsStatic)
                 OnPositionChanged?.Invoke(this);
         }
 
@@ -68,5 +74,10 @@ namespace BlazorRoguelike.Core.Components
 
         public event OnCollisionHandler OnCollision;
         public delegate void OnCollisionHandler(BoundingBoxComponent sender, BoundingBoxComponent collidedWith);
+
+        /// <summary>
+        /// when true, OnPositionChanged won't be triggered
+        /// </summary>
+        public bool IsStatic { get; set; }
     }
 }
