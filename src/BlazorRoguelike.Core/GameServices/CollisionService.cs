@@ -127,7 +127,7 @@ namespace BlazorRoguelike.Core.GameServices
             var row = (int)(rows * ((float)y / _game.Display.Size.Height));
 
             return (row >= 0 && row < rows && col >= 0 && col < cols) ?
-                _buckets[row, col].Colliders : Enumerable.Empty<BoundingBoxComponent>();
+                _buckets[row, col].Colliders.Where(c => c.Bounds.Contains(x, y)) : Enumerable.Empty<BoundingBoxComponent>();
         }
 
         public ValueTask Step()
