@@ -209,11 +209,7 @@ namespace BlazorRoguelike.Web.Game.Scenes
             var playerUI = ui.Components.Add<PlayerUIComponent>();
             playerUI.Player = player;
             playerUI.PotionSprite = spriteSheet.GetSprite("ui-potion3");
-            playerUI.HeartSprites = new[]{
-                spriteSheet.GetSprite("ui-heart1"),
-                spriteSheet.GetSprite("ui-heart2"),
-                spriteSheet.GetSprite("ui-heart3")
-            };
+            playerUI.HeartSprite = spriteSheet.GetSprite("ui-heart3");
 
             this.Root.AddChild(ui);
         }
