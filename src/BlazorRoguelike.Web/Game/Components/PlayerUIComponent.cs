@@ -53,7 +53,6 @@ namespace BlazorRoguelike.Web.Game.Components
             await RenderText(context, text, PotionSprite.Bounds.Width);
         }
 
-
         private async ValueTask RenderHearts(GameContext game, Canvas2DContext context)
         {            
             var text = $"{_playerStatsComponent.Health}/{_playerStatsComponent.MaxHealth}";
@@ -62,6 +61,7 @@ namespace BlazorRoguelike.Web.Game.Components
 
             await RenderText(context, text, HeartSprite.Bounds.Width);
         }
+
         private static async Task RenderText(Canvas2DContext context, string text, int x)
         {
             await context.SetFillStyleAsync("#fff");
