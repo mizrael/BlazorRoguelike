@@ -68,9 +68,9 @@ namespace BlazorRoguelike.Core.AI
                                             Func<TN, IEnumerable<TN>> findNeighbours)
         {
             var closed = new HashSet<TN>();
-            var queue = new PriorityQueue<double, TempPath<TN>>();
-            queue.Enqueue(0, new TempPath<TN>(start));
-            while (!queue.IsEmpty)
+            var queue = new PriorityQueue<TempPath<TN>, double>();
+            queue.Enqueue(new TempPath<TN>(start), 0);
+            while (0 != queue.Count)
             {
                 var path = queue.Dequeue();
                 if (closed.Contains(path.LastStep))
@@ -86,7 +86,8 @@ namespace BlazorRoguelike.Core.AI
                     {
                         double d = distance(path.LastStep, n);
                         var newPath = path.AddStep(n, d);
-                        queue.Enqueue(newPath.TotalCost + estimate(n, destination), newPath);
+                        var newPriority = newPath.TotalCost + estimate(n, destination);
+                        queue.Enqueue(newPath, newPriority);
                     }
                 }
             }
