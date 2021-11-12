@@ -68,7 +68,9 @@ namespace BlazorRoguelike.Core.AI
                                             Func<TN, IEnumerable<TN>> findNeighbours)
         {
             var closed = new HashSet<TN>();
-            var queue = new PriorityQueue<double, TempPath<TN>>();
+
+            //TODO: replace PriorityQueue with framework's classs
+            var queue = new Utils.PriorityQueue<double, TempPath<TN>>();
             queue.Enqueue(0, new TempPath<TN>(start));
             while (!queue.IsEmpty)
             {
