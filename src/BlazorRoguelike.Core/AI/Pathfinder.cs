@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BlazorRoguelike.Core.Utils;
 
 namespace BlazorRoguelike.Core.AI
 {
@@ -69,10 +68,9 @@ namespace BlazorRoguelike.Core.AI
         {
             var closed = new HashSet<TN>();
 
-            //TODO: replace PriorityQueue with framework's classs
-            var queue = new Utils.PriorityQueue<double, TempPath<TN>>();
-            queue.Enqueue(0, new TempPath<TN>(start));
-            while (!queue.IsEmpty)
+            var queue = new PriorityQueue<TempPath<TN>, double>();
+            queue.Enqueue(new TempPath<TN>(start), 0);
+            while (queue.Count != 0)
             {
                 var path = queue.Dequeue();
                 if (closed.Contains(path.LastStep))
@@ -88,7 +86,7 @@ namespace BlazorRoguelike.Core.AI
                     {
                         double d = distance(path.LastStep, n);
                         var newPath = path.AddStep(n, d);
-                        queue.Enqueue(newPath.TotalCost + estimate(n, destination), newPath);
+                        queue.Enqueue(newPath, newPath.TotalCost + estimate(n, destination));
                     }
                 }
             }
