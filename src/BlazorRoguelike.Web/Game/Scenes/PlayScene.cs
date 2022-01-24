@@ -153,6 +153,7 @@ namespace BlazorRoguelike.Web.Game.Scenes
                         break;
                     case MapObjectType.Enemy:
                         renderer.LayerIndex = (int)RenderLayers.Enemies;
+                        entity.Components.Add<PathFollowerComponent>();
                         entity.Components.Add<EnemyBrainComponent>();
                         break;
                 }

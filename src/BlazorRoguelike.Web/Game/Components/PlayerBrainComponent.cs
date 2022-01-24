@@ -13,8 +13,6 @@ namespace BlazorRoguelike.Web.Game.Components
         private MapRenderComponent _mapRenderer;
         private GameObject _movementCursor;
 
-        private readonly PlayerStatePicker _statePicker = new();
-
         private PlayerBrainComponent(GameObject owner) : base(owner)
         {
         }
@@ -38,7 +36,7 @@ namespace BlazorRoguelike.Web.Game.Components
                 _movementCursor.Enabled = false;
 
                 var newState = new AI.States.Idle(this.Owner);
-                _statePicker.SetState(newState);
+                base.SetState(newState);
             };
 
             _inputService = game.GetService<InputService>();
@@ -57,13 +55,11 @@ namespace BlazorRoguelike.Web.Game.Components
                         return;
 
                     var newState = new AI.States.FollowPath(this.Owner, destination);
-                    _statePicker.SetState(newState);
+                    base.SetState(newState);
                 }
             };
 
             return ValueTask.CompletedTask;
         }
-
-        protected override IStatePicker InitStatePicker() => _statePicker;
     }
 }

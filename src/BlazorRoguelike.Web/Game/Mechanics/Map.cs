@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Threading.Tasks;
 using BlazorRoguelike.Core.AI;
 using BlazorRoguelike.Core.Utils;
@@ -10,6 +11,8 @@ namespace BlazorRoguelike.Web.Game.Mechanics
     public class Map
     {
         #region members
+
+        private const int TileStep = 4;
 
         private readonly TileInfo[,] _tiles;
 
@@ -23,7 +26,7 @@ namespace BlazorRoguelike.Web.Game.Mechanics
 
         public Map(DungeonGenerator.Dungeon dungeon, MapObjects availableMapObjects)
         {
-            var cells = dungeon.ExpandToTiles(4);
+            var cells = dungeon.ExpandToTiles(TileStep);
             Rows = cells.GetLength(0);
             Cols = cells.GetLength(1);
 
@@ -71,6 +74,19 @@ namespace BlazorRoguelike.Web.Game.Mechanics
             return TileInfo.Void;
         }
 
+        public TileInfo GetRandomEmptyTile(DungeonGenerator.Room room)
+        {
+            int count = 0;
+            while (count++ < 10)
+            {
+                var (row, col) = room.GetRandomTile(TileStep);                
+                var tile = GetTileAt(row, col);
+                if (tile.Type == DungeonGenerator.TileType.Empty)
+                    return tile;
+            }
+            return TileInfo.Void;
+        }
+
         public TileInfo GetTileAt(int row, int col)
         {
             if (row < 0 || row > Rows - 1 || col < 0 || col > Cols - 1)
@@ -99,18 +115,21 @@ namespace BlazorRoguelike.Web.Game.Mechanics
 
         private void GenerateMapObjects(DungeonGenerator.Dungeon dungeon, MapObjects availableMapObjects)
         {
-            // TODO: improve generator (eg. better randomization, room positioning, etc)
+            // TODO: improve generator (eg. better randomization, etc)
 
-            var roomsCount = dungeon.Rooms.Count;
-            for(int i = 0; i != roomsCount; ++i)
+            foreach(var room in dungeon.Rooms)
             {
                 var item = availableMapObjects.GetRandomByType(MapObjectType.Item);
-                if(null != item)
-                    _mapObjects.Add((item, GetRandomEmptyTile()));
+                if (null != item)
+                {
+                    _mapObjects.Add((item, GetRandomEmptyTile(room)));
+                }            
 
                 var enemy = availableMapObjects.GetRandomByType(MapObjectType.Enemy);
                 if (null != enemy)
-                    _mapObjects.Add((enemy, GetRandomEmptyTile()));
+                {
+                    _mapObjects.Add((enemy, GetRandomEmptyTile(room)));
+                }                    
             }            
         }
 

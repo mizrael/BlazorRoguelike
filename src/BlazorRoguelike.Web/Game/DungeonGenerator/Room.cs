@@ -1,3 +1,4 @@
+using BlazorRoguelike.Core.Utils;
 using System.Drawing;
 
 namespace BlazorRoguelike.Web.Game.DungeonGenerator
@@ -34,9 +35,22 @@ namespace BlazorRoguelike.Web.Game.DungeonGenerator
             bounds = new Rectangle(location, bounds.Size);
         }
 
-        #endregion
+        /// Get the room min and max location in tile coordinates
+        public (Point minPoint, Point maxPoint) GetBounds(int tileStep)
+        {
+            Point minPoint = new Point(tileStep * (Bounds.Location.X * 2 + 1), tileStep * (Bounds.Location.Y * 2 + 1));
+            Point maxPoint = new Point(tileStep * Bounds.Right * 2, tileStep * Bounds.Bottom * 2);
 
-        #region Properties
+            return (minPoint, maxPoint);
+        }
+
+        public (int row, int col) GetRandomTile(int tileStep)
+        {
+            var (min, max) = GetBounds(tileStep);
+            var row = MathUtils.Random.Next(min.X, max.X);
+            var col = MathUtils.Random.Next(min.Y, max.Y);
+            return (row, col);
+        }
 
         #endregion
     }

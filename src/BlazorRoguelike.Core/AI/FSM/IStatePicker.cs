@@ -2,6 +2,6 @@
 {
     public interface IStatePicker
     {
-        State GetCurrentState();
+        State GetNextState();
     }
 }
