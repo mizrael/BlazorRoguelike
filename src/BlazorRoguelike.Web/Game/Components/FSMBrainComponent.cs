@@ -15,12 +15,12 @@ namespace BlazorRoguelike.Web.Game.Components
 
         protected override ValueTask UpdateCore(GameContext game)
         {               
-            if (_currState is not null && !_currState.Completed)
+            if (_currState is not null && !_currState.IsCompleted)
             {
                 _currState.Execute(game);
-                if (_currState.Completed)
+                if (_currState.IsCompleted)
                 {
-                    _currState.Exit();
+                    _currState.Exit(game);
                     _currState = null;
                 }                    
             }
@@ -28,12 +28,12 @@ namespace BlazorRoguelike.Web.Game.Components
             return ValueTask.CompletedTask;
         }
 
-        protected void SetState(State newState)
+        protected void SetState(GameContext game, State newState)
         {
             if (_currState is not null)
-                _currState.Exit();
+                _currState.Exit(game);
             _currState = newState;
-            _currState.Enter();
+            _currState.Enter(game);
         }
     }
 }

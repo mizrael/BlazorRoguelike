@@ -2,6 +2,6 @@
 {
     public interface IStatePicker
     {
-        State GetNextState();
+        State GetNextState(GameContext game);
     }
 }

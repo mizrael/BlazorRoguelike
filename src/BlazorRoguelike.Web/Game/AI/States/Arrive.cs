@@ -5,18 +5,19 @@ using BlazorRoguelike.Web.Game.Mechanics;
 
 namespace BlazorRoguelike.Web.Game.AI.States
 {
-    public class FollowPath : State
+    public class Arrive : State
     {
         private PathFollowerComponent _pathFollower;
 
-        public FollowPath(GameObject owner, TileInfo dest) : base(owner)
+        public Arrive(GameObject owner) : base(owner)
         {
             _pathFollower = this.Owner.Components.Get<PathFollowerComponent>();
-            _pathFollower.OnArrived += _ =>{
-                this.Completed = true;
-            };
-            _pathFollower.SetDestination(dest);
+            _pathFollower.OnArrived += _ => {
+                this.IsCompleted = true;
+            };            
         }
 
+        public void SetDestination(TileInfo dest)
+            => _pathFollower.FindPathTo(dest);
     }
 }

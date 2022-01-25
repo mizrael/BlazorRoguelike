@@ -6,41 +6,41 @@
 		{
 			this.Owner = owner;
 
-			this.ExecutionTime = 0f;
+			this.ElapsedMilliseconds = 0f;
 		}
 
-		protected virtual void OnEnter (){}
+		protected virtual void OnEnter (GameContext game) {}
 
 		protected virtual void OnExecute (GameContext game){}
 
-		protected virtual void OnExit () {}
+		protected virtual void OnExit (GameContext game) {}
 
-		public void Enter()
+		public void Enter(GameContext game)
 		{
-			this.ExecutionTime = 0f;
-			this.Completed = false;
-			this.OnEnter();
+			this.ElapsedMilliseconds = 0f;
+			this.IsCompleted = false;
+			this.OnEnter(game);
 		}
 
 		public void Execute(GameContext game)
 		{
-			this.ExecutionTime += game.GameTime.ElapsedMilliseconds;
+			this.ElapsedMilliseconds += game.GameTime.ElapsedMilliseconds;
 			OnExecute(game);
 		}
 
-		public void Exit()
+		public void Exit(GameContext game)
 		{
-			this.Completed = true;
-			this.OnExit();
+			this.IsCompleted = true;
+			this.OnExit(game);
 		}
 
 		#region Properties
 
 		public readonly GameObject Owner;
 
-		public float ExecutionTime { get; private set; }
+		public float ElapsedMilliseconds { get; private set; }
 
-		public bool Completed { get; protected set; }
+		public bool IsCompleted { get; protected set; }
 
 		#endregion Properties
 	}

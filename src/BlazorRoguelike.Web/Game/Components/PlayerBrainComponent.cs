@@ -36,7 +36,7 @@ namespace BlazorRoguelike.Web.Game.Components
                 _movementCursor.Enabled = false;
 
                 var newState = new AI.States.Idle(this.Owner);
-                base.SetState(newState);
+                base.SetState(game, newState);
             };
 
             _inputService = game.GetService<InputService>();
@@ -54,8 +54,9 @@ namespace BlazorRoguelike.Web.Game.Components
                     if (!destination.IsWalkable)
                         return;
 
-                    var newState = new AI.States.FollowPath(this.Owner, destination);
-                    base.SetState(newState);
+                    var newState = new AI.States.Arrive(this.Owner);
+                    newState.SetDestination(destination);
+                    base.SetState(game, newState);
                 }
             };
 

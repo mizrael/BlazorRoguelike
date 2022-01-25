@@ -87,6 +87,20 @@ namespace BlazorRoguelike.Web.Game.Mechanics
             return TileInfo.Void;
         }
 
+        public TileInfo GetRandomEmptyTile(TileInfo center, int radius)
+        {
+            int count = 0;
+            while (count++ < 10)
+            {
+                var row = MathUtils.Random.Next(center.Row - radius, center.Row + radius);
+                var col = MathUtils.Random.Next(center.Col - radius, center.Col + radius);
+                var tile = GetTileAt(row, col);
+                if (tile.Type == DungeonGenerator.TileType.Empty)
+                    return tile;
+            }
+            return TileInfo.Void;
+        }
+
         public TileInfo GetTileAt(int row, int col)
         {
             if (row < 0 || row > Rows - 1 || col < 0 || col > Cols - 1)

@@ -4,7 +4,7 @@ using BlazorRoguelike.Core.AI.FSM;
 
 namespace BlazorRoguelike.Web.Game.AI.States
 {
-	public class Idle : State
+    public class Idle : State
 	{
 		private float _duration;
 		private bool _hasDuration = false;
@@ -18,8 +18,8 @@ namespace BlazorRoguelike.Web.Game.AI.States
 
 		protected override void OnExecute (GameContext game)
 		{
-			if (_hasDuration && this.ExecutionTime > _duration) {
-				this.Completed = true;
+			if (_hasDuration && this.ElapsedMilliseconds > _duration) {
+				this.IsCompleted = true;
 				return;
 			}
 			base.OnExecute (game);
