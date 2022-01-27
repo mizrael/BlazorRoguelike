@@ -18,6 +18,6 @@ namespace BlazorRoguelike.Web.Game.AI.States
         }
 
         public void SetDestination(TileInfo dest)
-            => _pathFollower.FindPathTo(dest);
+            => _pathFollower.SetDestination(dest);
     }
 }

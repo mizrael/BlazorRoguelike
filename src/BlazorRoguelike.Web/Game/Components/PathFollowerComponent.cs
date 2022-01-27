@@ -54,7 +54,7 @@ namespace BlazorRoguelike.Web.Game.Components
             }
         }
 
-        public void FindPathTo(TileInfo destination)
+        public void SetDestination(TileInfo destination)
         {
             _currPathNode = null;
             _path = null;

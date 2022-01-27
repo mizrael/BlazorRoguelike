@@ -35,7 +35,7 @@ namespace BlazorRoguelike.Web.Game.Components
             {
                 _movementCursor.Enabled = false;
 
-                var newState = new AI.States.Idle(this.Owner);
+                var newState = new AI.States.Idle(this.Owner, 0f);
                 base.SetState(game, newState);
             };
 

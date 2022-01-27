@@ -1,6 +1,7 @@
 ﻿using BlazorRoguelike.Core;
 using BlazorRoguelike.Core.AI.FSM;
 using BlazorRoguelike.Core.Components;
+using BlazorRoguelike.Core.Utils;
 using BlazorRoguelike.Web.Game.AI.States;
 using BlazorRoguelike.Web.Game.Components;
 
@@ -15,7 +16,7 @@ namespace BlazorRoguelike.Web.Game.AI
             var mapRenderer = map.Components.Get<MapRenderComponent>();
             var startTile = mapRenderer.GetTileAt(transform.World.Position);
 
-            var idle = new Idle(owner, 2f * 1000f); //TODO: move the delay to set method
+            var idle = new Idle(owner, 2000f); 
             var arrive = new Arrive(owner);
 
             var machine = new Machine(new State[]
@@ -34,8 +35,10 @@ namespace BlazorRoguelike.Web.Game.AI
                 a.SetDestination(destTile);
             });
 
-            // TODO: set a random idle delay before transitioning
-            machine.AddTransition(arrive, idle, s => s.IsCompleted); 
+            machine.AddTransition(arrive, idle, s => s.IsCompleted, s =>
+            {
+                idle.SetDuration(MathUtils.Random.NextSingle() * 5000f);
+            }); 
 
             return machine;
         }
