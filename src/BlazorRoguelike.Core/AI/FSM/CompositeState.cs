@@ -26,23 +26,23 @@ namespace BlazorRoguelike.Core.AI.FSM
 		{
 			if (null == _currState) {
 				if (0 == _states.Count) {
-					this.Completed = true;
+					this.IsCompleted = true;
 					return;
 				}
 
 				_currState = _states.Dequeue ();
-				_currState.Enter ();
+				_currState.Enter (game);
 			}
 
-			if (_currState.Completed) {
+			if (_currState.IsCompleted) {
 				_currState = null;
 				return;
 			}
 
 			_currState.Execute (game);
 
-			if (_currState.Completed) {
-				_currState.Exit ();
+			if (_currState.IsCompleted) {
+				_currState.Exit (game);
 				_currState = null;
 			}
 		}

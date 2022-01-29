@@ -24,27 +24,28 @@ namespace BlazorRoguelike.Core.AI.FSM
             _rules.Sort((a, b) => a.rule.Weight >= b.rule.Weight ? 1 : 0); //TODO: ensure sorting is descending
 		}
 
-		public State GetCurrentState(){
+		public State GetNextState(GameContext game)
+		{
 			var (rule, factory) = FindValidStateBuilder ();
 
 			if(!CheckCanReplaceCurrentState(rule, factory))
 				return _currState;
 			
             if (!CheckIsRunning(_currState) || _currFactory != _defaultStateFactory) {
-				SwitchState (_defaultStateFactory, null);
+				SwitchState (game, _defaultStateFactory, null);
 			} else if (null != rule) {
-				SwitchState (factory, rule);
+				SwitchState (game, factory, rule);
 			}
 
 			return _currState;
 		}
 
-		private void SwitchState(IStateFactory factory, StatePickingRule rule){
+		private void SwitchState(GameContext game, IStateFactory factory, StatePickingRule rule){
             if (CheckIsRunning(_currState))
-				_currState.Exit ();
+				_currState.Exit(game);
 			_currFactory = factory;
 			_currState = _currFactory.Create (rule);
-			_currState.Enter ();
+			_currState.Enter (game);
 		}
 
 		private (StatePickingRule rule, IStateFactory factory) FindValidStateBuilder(){
@@ -74,7 +75,7 @@ namespace BlazorRoguelike.Core.AI.FSM
 		}
 
 		private static bool CheckIsRunning(State state){
-            return (null != state && !state.Completed);
+            return (null != state && !state.IsCompleted);
 		}
 	}
 }

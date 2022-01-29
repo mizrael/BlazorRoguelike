@@ -171,9 +171,7 @@ namespace BlazorRoguelike.Web.Game.DungeonGenerator
             // Fill tiles with corridor values for each room in dungeon
             foreach (Room room in this.Rooms)
             {
-                // Get the room min and max location in tile coordinates
-                Point minPoint = new Point(tileStep * (room.Bounds.Location.X * 2 + 1), tileStep * (room.Bounds.Location.Y * 2 + 1));
-                Point maxPoint = new Point(tileStep * room.Bounds.Right * 2, tileStep * room.Bounds.Bottom * 2);
+                var (minPoint, maxPoint) = room.GetBounds(tileStep);
 
                 // Fill the room in tile space with an empty value
                 for (int i = minPoint.X; i < maxPoint.X; i++)

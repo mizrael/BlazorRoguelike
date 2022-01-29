@@ -1,7 +1,6 @@
 ﻿using BlazorRoguelike.Core;
 using BlazorRoguelike.Core.Components;
 using BlazorRoguelike.Web.Game.Mechanics;
-using System;
 
 namespace BlazorRoguelike.Web.Game.Components
 {
@@ -24,7 +23,7 @@ namespace BlazorRoguelike.Web.Game.Components
             if (item.Id == "potion")
                 return this.Potions < MaxPotions;
 
-            return false;
+            return true;
         }
     }
 }

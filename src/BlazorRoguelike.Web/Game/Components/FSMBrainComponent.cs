@@ -7,26 +7,33 @@ namespace BlazorRoguelike.Web.Game.Components
 {
     public abstract class FSMBrainComponent : Component
     {
-        private IStatePicker _statePicker;
+        private State _currState;
 
         protected FSMBrainComponent(GameObject owner) : base(owner)
         {
         }
 
         protected override ValueTask UpdateCore(GameContext game)
-        {
-            _statePicker ??= this.InitStatePicker();
-            var state = _statePicker.GetCurrentState();
-            if (state is not null)
+        {               
+            if (_currState is not null && !_currState.IsCompleted)
             {
-                state.Execute(game);
-                if (state.Completed)
-                    state.Exit();
+                _currState.Execute(game);
+                if (_currState.IsCompleted)
+                {
+                    _currState.Exit(game);
+                    _currState = null;
+                }                    
             }
                 
             return ValueTask.CompletedTask;
         }
 
-        protected abstract IStatePicker InitStatePicker();
+        protected void SetState(GameContext game, State newState)
+        {
+            if (_currState is not null)
+                _currState.Exit(game);
+            _currState = newState;
+            _currState.Enter(game);
+        }
     }
 }
