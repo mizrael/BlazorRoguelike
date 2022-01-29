@@ -1,10 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Threading.Tasks;
 using BlazorRoguelike.Core.AI;
 using BlazorRoguelike.Core.Utils;
 using BlazorRoguelike.Web.Game.Assets;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BlazorRoguelike.Web.Game.Mechanics
 {
@@ -133,13 +132,13 @@ namespace BlazorRoguelike.Web.Game.Mechanics
 
             foreach(var room in dungeon.Rooms)
             {
-                var item = availableMapObjects.GetRandomByType(MapObjectType.Item);
+                var item = availableMapObjects.GetRandomByGroup(MapObjectType.Groups.Collectibles);
                 if (null != item)
                 {
                     _mapObjects.Add((item, GetRandomEmptyTile(room)));
                 }            
 
-                var enemy = availableMapObjects.GetRandomByType(MapObjectType.Enemy);
+                var enemy = availableMapObjects.GetRandomByGroup(MapObjectType.Groups.Enemies);
                 if (null != enemy)
                 {
                     _mapObjects.Add((enemy, GetRandomEmptyTile(room)));
@@ -195,16 +194,5 @@ namespace BlazorRoguelike.Web.Game.Mechanics
         }
 
         #endregion private methods
-    }
-
-    // TODO: this assumes that the item is always rendered using a static sprite and does not allow customization of the tileset.
-    // Consider adding a key/value collection or some inheritance (based on the type perhaps), or a simple flag "is animated"
-    public record MapObject(string Id, MapObjectType Type, string SpriteName);
-
-    public enum MapObjectType
-    {
-        Unknown = 0,
-        Item,
-        Enemy
     }
 }

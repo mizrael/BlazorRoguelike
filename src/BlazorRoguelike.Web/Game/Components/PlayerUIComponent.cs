@@ -37,20 +37,22 @@ namespace BlazorRoguelike.Web.Game.Components
             await context.TranslateAsync(leftMargin, y);
 
             await RenderHearts(game, context);
-            await RenderPotions(game, context);
+            await RenderInventory(game, context);
 
             await context.RestoreAsync();
         }
 
-        private async ValueTask RenderPotions(GameContext game, Canvas2DContext context)
+        private async ValueTask RenderInventory(GameContext game, Canvas2DContext context)
         {
-            var text = $"{_playerInventoryComponent.Potions}";
+            //TODO
 
-            await context.TranslateAsync(0, HeartSprite.Bounds.Height);
+            //var text = $"{_playerInventoryComponent.AvailableSlots}";
 
-            await RenderSprite(context, PotionSprite);
+            //await context.TranslateAsync(0, HeartSprite.Bounds.Height);
 
-            await RenderText(context, text, PotionSprite.Bounds.Width);
+            //await RenderSprite(context, PotionSprite);
+
+            //await RenderText(context, text, PotionSprite.Bounds.Width);
         }
 
         private async ValueTask RenderHearts(GameContext game, Canvas2DContext context)

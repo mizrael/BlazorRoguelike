@@ -123,10 +123,13 @@ namespace BlazorRoguelike.Web.Game.Scenes
         {
             foreach (var item in _map.Objects)
             {
-                if (string.IsNullOrWhiteSpace(item.mapObject.SpriteName))
+                if (!item.mapObject.Properties.TryGetValue("sprite", out var tmpProp))
+                    continue;
+                var spriteName = tmpProp.ToString();
+                if (string.IsNullOrWhiteSpace(spriteName))
                     continue;
 
-                var sprite = tileset.GetSprite(item.mapObject.SpriteName);
+                var sprite = tileset.GetSprite(spriteName);
                 if (null == sprite)
                     continue;
 
@@ -142,16 +145,16 @@ namespace BlazorRoguelike.Web.Game.Scenes
                 bbox.SetSize(sprite.Bounds.Size);
                 _collisionService.RegisterCollider(bbox);
 
-                switch (item.mapObject.Type)
+                switch (item.mapObject.Type.Group)
                 {
-                    case MapObjectType.Item:
+                    case MapObjectType.Groups.Collectibles:
                         bbox.IsStatic = true;
 
                         renderer.LayerIndex = (int)RenderLayers.Items;
                         var brain = entity.Components.Add<GroundItemBrainComponent>();
                         brain.Item = item.mapObject;
                         break;
-                    case MapObjectType.Enemy:
+                    case MapObjectType.Groups.Enemies:
                         renderer.LayerIndex = (int)RenderLayers.Enemies;
                         entity.Components.Add<PathFollowerComponent>();
                         entity.Components.Add<EnemyBrainComponent>();
