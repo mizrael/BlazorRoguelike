@@ -48,6 +48,9 @@ namespace BlazorRoguelike.Core.Assets
             _sprites.TryGetValue(name, out var sprite);
             return sprite;
         }
+
+        public bool TryGetSprite(string name, out SpriteBase sprite)
+            => _sprites.TryGetValue(name, out sprite);
     }
     
 }

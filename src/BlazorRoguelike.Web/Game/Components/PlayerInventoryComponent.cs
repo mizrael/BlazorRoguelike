@@ -13,7 +13,8 @@ namespace BlazorRoguelike.Web.Game.Components
         {
         }
 
-        public bool TryAdd(MapObject item) {
+        public bool TryAdd(MapObject item) 
+        {
             if (item.Type.Group == MapObjectType.Groups.Collectibles &&
                 _inventory.Count < MaxSlots)
             {
@@ -23,6 +24,9 @@ namespace BlazorRoguelike.Web.Game.Components
 
             return false;
         }    
+
+        public MapObject GetItemAt(int index)
+            => index < _inventory.Count ? _inventory[index] : null;        
 
         public const int MaxSlots = 5;
     }

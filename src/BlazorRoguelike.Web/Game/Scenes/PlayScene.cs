@@ -123,10 +123,13 @@ namespace BlazorRoguelike.Web.Game.Scenes
         {
             foreach (var item in _map.Objects)
             {
-                if (!item.mapObject.Properties.TryGetValue("sprite", out var tmpProp))
-                    continue;
-                var spriteName = tmpProp.ToString();
-                if (string.IsNullOrWhiteSpace(spriteName))
+                //if (!item.mapObject.Properties.TryGetValue("sprite", out var tmpProp))
+                //    continue;
+                //var spriteName = tmpProp.ToString();
+                //if (string.IsNullOrWhiteSpace(spriteName))
+                //    continue;
+
+                if (!item.mapObject.TryGetProperty<string>("sprite", out var spriteName))
                     continue;
 
                 var sprite = tileset.GetSprite(spriteName);
@@ -200,12 +203,9 @@ namespace BlazorRoguelike.Web.Game.Scenes
 #if DEBUG
        //     var debugStats = ui.Components.Add<DebugStatsUIComponent>();
 #endif
-            var spriteSheet = _assetsResolver.Get<SpriteSheet>("assets/tilesets/dungeon4.json");
-
             var playerUI = ui.Components.Add<PlayerUIComponent>();
             playerUI.Player = player;
-            playerUI.PotionSprite = spriteSheet.GetSprite("ui-potion3");
-            playerUI.HeartSprite = spriteSheet.GetSprite("ui-heart3");
+            playerUI.SetSpriteSheet(_assetsResolver.Get<SpriteSheet>("assets/tilesets/dungeon4.json"));            
 
             this.Root.AddChild(ui);
         }

@@ -48,15 +48,19 @@ namespace BlazorRoguelike.Web.Game.Assets
 
         public async ValueTask<MapObjects> Load(AssetMeta meta)
         {
-            var dtos = await _httpClient.GetFromJsonAsync<MapObjectDTO[]>(meta.Path);
-            var mapObjects = dtos.Select(d => {
-                var type = MapObjectType.Create(d.type);
-                return new MapObject(type, d.id, d.properties ?? new Dictionary<string, object>());
-            });
+            var dtos = await _httpClient.GetFromJsonAsync<MapObjectRaw[]>(meta.Path);
+            var mapObjects = dtos.Select(d => d.ToModel());
 
             return new MapObjects(meta.Path, mapObjects);
         }
 
-        internal record MapObjectDTO(string id, string type, IReadOnlyDictionary<string, object> properties);
+        private record MapObjectRaw(string id, string type, IDictionary<string, object> properties)
+        {
+            public MapObject ToModel()
+            {
+                var type = MapObjectType.Create(this.type);
+                return new MapObject(type, this.id, this.properties ?? new Dictionary<string, object>());
+            }
+        }
     }
 }
