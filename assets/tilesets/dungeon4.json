@@ -1,0 +1,215 @@
+{
+  "imagePath": "assets/tilesets/dungeon4.png",
+  "sprites": [
+    {
+      "name": "cursor",
+      "x": "629",
+      "y": "204",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "cursor-x",
+      "x": "681",
+      "y": "221",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "cursor-sel",
+      "x": "697",
+      "y": "221",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "cursor-move",
+      "x": "463",
+      "y": "361",
+      "width": "8",
+      "height": "8"
+    },
+    {
+      "name": "floor",
+      "x": "272",
+      "y": "0",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "void",
+      "x": "0",
+      "y": "0",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "door",
+      "x": "221",
+      "y": "272",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "wall",
+      "x": "170",
+      "y": "289",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "walleo",
+      "x": "170",
+      "y": "289",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "wallne",
+      "x": "170",
+      "y": "289",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "wallno",
+      "x": "170",
+      "y": "289",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "wallns",
+      "x": "170",
+      "y": "289",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "wallse",
+      "x": "170",
+      "y": "289",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "wallso",
+      "x": "170",
+      "y": "289",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "walleso",
+      "x": "170",
+      "y": "289",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "wallnes",
+      "x": "170",
+      "y": "289",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "wallneo",
+      "x": "170",
+      "y": "289",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "wallnso",
+      "x": "170",
+      "y": "289",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "wallneso",
+      "x": "170",
+      "y": "289",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "player-base",
+      "x": "426",
+      "y": "0",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "potion",
+      "x": "663",
+      "y": "187",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "skeleton",
+      "x": "408",
+      "y": "51",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "spider1",
+      "x": "476",
+      "y": "85",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "ui-potion1",
+      "x": "680",
+      "y": "187",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "ui-potion2",
+      "x": "697",
+      "y": "187",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "ui-potion3",
+      "x": "714",
+      "y": "187",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "ui-heart1",
+      "x": "680",
+      "y": "170",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "ui-heart2",
+      "x": "697",
+      "y": "170",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "ui-heart3",
+      "x": "714",
+      "y": "170",
+      "width": "16",
+      "height": "16"
+    },
+    {
+      "name": "ui-inventory-slot",
+      "x": "663",
+      "y": "238",
+      "width": "16",
+      "height": "16"
+    }
+  ]
+}

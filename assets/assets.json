@@ -1,0 +1,10 @@
+﻿[
+  {
+    "path": "assets/tilesets/dungeon4.json",
+    "type": "spritesheet"
+  },
+  {
+    "path": "assets/map-objects.json",
+    "type": "map-objects"
+  }
+]
