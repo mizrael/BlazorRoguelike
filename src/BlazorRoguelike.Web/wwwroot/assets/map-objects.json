@@ -1,17 +1,24 @@
 ﻿[
   {
-    "id": "potion",
-    "sprite": "potion",
-    "type": "item"
+    "id": "health_potion",
+    "type": "potion",
+    "properties": {
+      "sprite": "potion",
+      "inventorySprite": "potion"
+    }
   },
   {
-    "id": "skeleton",
-    "sprite": "skeleton",
-    "type": "enemy"
+    "id": "skeleton1",
+    "type": "enemy",
+    "properties": {
+      "sprite": "skeleton"
+    }
   },
   {
     "id": "spider1",
-    "sprite": "spider1",
-    "type": "enemy"
+    "type": "enemy",
+    "properties": {
+      "sprite": "spider1"
+    }
   }
 ]

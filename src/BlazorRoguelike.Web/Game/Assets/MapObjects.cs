@@ -11,27 +11,27 @@ using System.Threading.Tasks;
 
 namespace BlazorRoguelike.Web.Game.Assets
 {
-    public record MapObjects: IAsset
+    public record MapObjects : IAsset
     {
-        private readonly IDictionary<MapObjectType, MapObject[]> _byType;
+        private readonly IDictionary<MapObjectType.Groups, MapObject[]> _byGroup;
 
         public MapObjects(string name, IEnumerable<MapObject> objects)
         {
             Name = name;
             Objects = objects ?? Enumerable.Empty<MapObject>();
 
-            _byType = Objects.GroupBy(o => o.Type)
+            _byGroup = Objects.GroupBy(o => o.Type.Group)
                             .ToDictionary(g => g.Key, g => g.ToArray());
         }
 
         public string Name { get; }
         public IEnumerable<MapObject> Objects { get; }
 
-        public MapObject GetRandomByType(MapObjectType type)
+        public MapObject GetRandomByGroup(MapObjectType.Groups group)
         {
-            if (!_byType.ContainsKey(type))
+            if (!_byGroup.ContainsKey(group))
                 return null;
-            var filtered = _byType[type];
+            var filtered = _byGroup[group];
             var index = MathUtils.Random.Next(filtered.Length);
             return filtered[index];
         }
@@ -48,15 +48,19 @@ namespace BlazorRoguelike.Web.Game.Assets
 
         public async ValueTask<MapObjects> Load(AssetMeta meta)
         {
-            var dtos = await _httpClient.GetFromJsonAsync<MapObjectDTO[]>(meta.Path);
-            var mapObjects = dtos.Select(d => {
-                var type = Enum.Parse<MapObjectType>(d.type, true);
-                return new MapObject(d.id, type, d.sprite);
-            });
+            var dtos = await _httpClient.GetFromJsonAsync<MapObjectRaw[]>(meta.Path);
+            var mapObjects = dtos.Select(d => d.ToModel());
 
             return new MapObjects(meta.Path, mapObjects);
         }
 
-        internal record MapObjectDTO(string id, string type, string sprite);
+        private record MapObjectRaw(string id, string type, IDictionary<string, object> properties)
+        {
+            public MapObject ToModel()
+            {
+                var type = MapObjectType.Create(this.type);
+                return new MapObject(type, this.id, this.properties ?? new Dictionary<string, object>());
+            }
+        }
     }
 }

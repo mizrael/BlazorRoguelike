@@ -203,6 +203,13 @@
       "y": "170",
       "width": "16",
       "height": "16"
+    },
+    {
+      "name": "ui-inventory-slot",
+      "x": "663",
+      "y": "238",
+      "width": "16",
+      "height": "16"
     }
   ]
 }

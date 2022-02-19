@@ -14,6 +14,11 @@ namespace BlazorRoguelike.Web.Game.Components
         private PlayerStatsComponent _playerStatsComponent;
         private PlayerInventoryComponent _playerInventoryComponent;
 
+        private SpriteBase _heartSprite;
+        private SpriteBase _inventorySlotSprite;
+
+        private SpriteSheet _spriteSheet;
+
         private PlayerUIComponent(GameObject owner) : base(owner)
         {
         }
@@ -37,29 +42,39 @@ namespace BlazorRoguelike.Web.Game.Components
             await context.TranslateAsync(leftMargin, y);
 
             await RenderHearts(game, context);
-            await RenderPotions(game, context);
+            await RenderInventory(game, context);
 
             await context.RestoreAsync();
         }
 
-        private async ValueTask RenderPotions(GameContext game, Canvas2DContext context)
+        private async ValueTask RenderInventory(GameContext game, Canvas2DContext context)
         {
-            var text = $"{_playerInventoryComponent.Potions}";
+            //TODO: pre-render the slots
 
-            await context.TranslateAsync(0, HeartSprite.Bounds.Height);
+            await context.TranslateAsync(0, _inventorySlotSprite.Bounds.Height);
+            for (int i = 0; i != PlayerInventoryComponent.MaxSlots; ++i)
+            {
+                await RenderSprite(context, _inventorySlotSprite);
 
-            await RenderSprite(context, PotionSprite);
+                var item = _playerInventoryComponent.GetItemAt(i);
+                if(item != null && 
+                    item.TryGetProperty<string>("inventorySprite", out var itemSpriteName) &&
+                    _spriteSheet.TryGetSprite(itemSpriteName, out var itemSprite))
+                {
+                    await RenderSprite(context, itemSprite);
+                }
 
-            await RenderText(context, text, PotionSprite.Bounds.Width);
+                await context.TranslateAsync(_inventorySlotSprite.Bounds.Width, 0);
+            }
         }
 
         private async ValueTask RenderHearts(GameContext game, Canvas2DContext context)
         {            
             var text = $"{_playerStatsComponent.Health}/{_playerStatsComponent.MaxHealth}";
 
-            await RenderSprite(context, HeartSprite);
+            await RenderSprite(context, _heartSprite);
 
-            await RenderText(context, text, HeartSprite.Bounds.Width);
+            await RenderText(context, text, _heartSprite.Bounds.Width);
         }
 
         private static async Task RenderText(Canvas2DContext context, string text, int x)
@@ -81,8 +96,13 @@ namespace BlazorRoguelike.Web.Game.Components
 
         public int LayerIndex { get; set; } = (int)RenderLayers.UI;
         public bool Hidden { get; set; } = false;
-        public GameObject Player { get; set; }   
-        public SpriteBase HeartSprite { get; set; }
-        public SpriteBase PotionSprite { get; set; }
+        public GameObject Player { get; set; }
+        
+        public void SetSpriteSheet(SpriteSheet spriteSheet)
+        {
+            _spriteSheet = spriteSheet;
+            _inventorySlotSprite = spriteSheet.GetSprite("ui-inventory-slot");
+            _heartSprite = spriteSheet.GetSprite("ui-heart3");
+        }
     }
 }
