@@ -216,7 +216,7 @@ namespace BlazorRoguelike.Web.Game.DungeonGenerator
                             tiles[x, y] = TileType.Empty;
 
                     for (int x = tileLocation.X; x != tileLocation.X + tileStep; ++x)
-                        tiles[x, tileLocation.Y - 1] = TileType.Wall;
+                        tiles[x, tileLocation.Y - 1] = TileType.WallSN;
 
                     for (int x = tileLocation.X + startStep; x != tileLocation.X + startStep + doorSize; ++x)
                         tiles[x, tileLocation.Y - 1] = TileType.Door;
@@ -228,7 +228,7 @@ namespace BlazorRoguelike.Web.Game.DungeonGenerator
                             tiles[x - 1, y] = TileType.Empty;
 
                     for (int y = tileLocation.Y; y != tileLocation.Y + tileStep; ++y)
-                        tiles[tileLocation.X - 1, y] = TileType.Wall;
+                        tiles[tileLocation.X - 1, y] = TileType.WallSN;
 
                     for (int y = tileLocation.Y + startStep; y != tileLocation.Y + startStep + doorSize; ++y)
                         tiles[tileLocation.X - 1, y] = TileType.Door;
@@ -254,32 +254,51 @@ namespace BlazorRoguelike.Web.Game.DungeonGenerator
             {
                 for (int y = 1; y < h - 1; y++)
                 {
-                    if (TileIsWall(tiles[x - 1, y]) && TileIsWall(tiles[x, y - 1]) &&
-                         (tiles[x + 1, y] == TileType.Empty) && (tiles[x, y + 1] == TileType.Empty))
+                    //   | W |
+                    // W |   | E
+                    //   | E | 
+                    if (TileIsWall(tiles[x - 1, y]) && 
+                        TileIsWall(tiles[x, y - 1]) &&
+                         (tiles[x + 1, y] == TileType.Empty) && 
+                         (tiles[x, y + 1] == TileType.Empty))
                     {
                         if (TileIsWall(tiles[x, y]))
                             tiles[x, y] = TileType.WallNO;
                         else if (tiles[x, y] == TileType.Empty)
                         {
+                            // SE| EO|
+                            // NS| E | E
+                            //   | E | 
                             tiles[x - 1, y - 1] = TileType.WallSE;
                             tiles[x - 1, y] = TileType.WallNS;
                             tiles[x, y - 1] = TileType.WallEO;
                         }
                     }
 
-                    if (TileIsWall(tiles[x + 1, y]) && TileIsWall(tiles[x, y - 1]) &&
-                       (tiles[x - 1, y] == TileType.Empty) && (tiles[x, y + 1] == TileType.Empty))
+                    //   | W |
+                    // E |   | W
+                    //   | E | 
+                    if (TileIsWall(tiles[x + 1, y]) && 
+                        TileIsWall(tiles[x, y - 1]) &&
+                       (tiles[x - 1, y] == TileType.Empty) && 
+                       (tiles[x, y + 1] == TileType.Empty))
                     {
                         if (TileIsWall(tiles[x, y]))
                             tiles[x, y] = TileType.WallNE;
                         else if (tiles[x, y] == TileType.Empty)
                         {
+                            //   | EO| SO
+                            // E | E | SN
+                            //   | E |
                             tiles[x + 1, y - 1] = TileType.WallSO;
-                            tiles[x + 1, y] = TileType.WallNS;
+                            tiles[x + 1, y] = TileType.WallSN;
                             tiles[x, y - 1] = TileType.WallEO;
                         }
                     }
 
+                    //  | E |
+                    // W|   | E
+                    //  | W |
                     if (TileIsWall(tiles[x - 1, y]) && TileIsWall(tiles[x, y + 1]) &&
                         (tiles[x + 1, y] == TileType.Empty) && (tiles[x, y - 1] == TileType.Empty))
                     {
@@ -287,12 +306,18 @@ namespace BlazorRoguelike.Web.Game.DungeonGenerator
                             tiles[x, y] = TileType.WallSO;
                         else if (tiles[x, y] == TileType.Empty)
                         {
+                            //   | E |
+                            // NS| E | E
+                            // NE| OE|
                             tiles[x - 1, y + 1] = TileType.WallNE;
                             tiles[x - 1, y] = TileType.WallNS;
-                            tiles[x, y + 1] = TileType.WallEO;
+                            tiles[x, y + 1] = TileType.WallOE;
                         }
                     }
 
+                    //   | E | 
+                    // E |   | W
+                    //   | W |
                     if (TileIsWall(tiles[x + 1, y]) && TileIsWall(tiles[x, y + 1]) &&
                        (tiles[x - 1, y] == TileType.Empty) && (tiles[x, y - 1] == TileType.Empty))
                     {
@@ -300,29 +325,58 @@ namespace BlazorRoguelike.Web.Game.DungeonGenerator
                             tiles[x, y] = TileType.WallSE;
                         else if (tiles[x, y] == TileType.Empty)
                         {
+                            //   | E | 
+                            // E | E | SN
+                            //   | OE| NO
                             tiles[x + 1, y + 1] = TileType.WallNO;
-                            tiles[x + 1, y] = TileType.WallNS;
-                            tiles[x, y + 1] = TileType.WallEO;
+                            tiles[x + 1, y] = TileType.WallSN;
+                            tiles[x, y + 1] = TileType.WallOE;
                         }
                     }
 
-                    if ((TileIsWall(tiles[x - 1, y - 1]) && TileIsWall(tiles[x - 1, y]) && TileIsWall(tiles[x - 1, y + 1]) &&
-                         TileIsWall(tiles[x, y - 1]) && TileIsWall(tiles[x, y + 1]) &&
-                         (tiles[x + 1, y - 1] == TileType.Empty) && (tiles[x + 1, y] == TileType.Empty) && (tiles[x + 1, y + 1] == TileType.Empty)) ||
-                        (TileIsWall(tiles[x + 1, y - 1]) && TileIsWall(tiles[x + 1, y]) && TileIsWall(tiles[x + 1, y + 1]) &&
-                         TileIsWall(tiles[x, y - 1]) && TileIsWall(tiles[x, y + 1]) &&
-                         (tiles[x - 1, y - 1] == TileType.Empty) && (tiles[x - 1, y] == TileType.Empty) && (tiles[x - 1, y + 1] == TileType.Empty)))
+                    if (TileIsWall(tiles[x - 1, y - 1]) && 
+                        TileIsWall(tiles[x - 1, y]) && 
+                        TileIsWall(tiles[x - 1, y + 1]) &&
+                        TileIsWall(tiles[x, y - 1]) && 
+                        TileIsWall(tiles[x, y + 1]) &&
+                         (tiles[x + 1, y - 1] == TileType.Empty) && 
+                         (tiles[x + 1, y] == TileType.Empty) && 
+                         (tiles[x + 1, y + 1] == TileType.Empty) )
                     {
                         tiles[x, y] = TileType.WallNS;
                     }
-                    else if ((TileIsWall(tiles[x - 1, y - 1]) && TileIsWall(tiles[x, y - 1]) && TileIsWall(tiles[x + 1, y - 1]) &&
-                         TileIsWall(tiles[x - 1, y]) && TileIsWall(tiles[x + 1, y]) &&
-                         (tiles[x - 1, y + 1] == TileType.Empty) && (tiles[x, y + 1] == TileType.Empty) && (tiles[x + 1, y + 1] == TileType.Empty)) ||
-                        (TileIsWall(tiles[x - 1, y + 1]) && TileIsWall(tiles[x, y + 1]) && TileIsWall(tiles[x + 1, y + 1]) &&
-                         TileIsWall(tiles[x - 1, y]) && TileIsWall(tiles[x + 1, y]) &&
-                         (tiles[x - 1, y - 1] == TileType.Empty) && (tiles[x, y - 1] == TileType.Empty) && (tiles[x + 1, y - 1] == TileType.Empty)))
+                    else if (TileIsWall(tiles[x + 1, y - 1]) && 
+                        TileIsWall(tiles[x + 1, y]) && 
+                        TileIsWall(tiles[x + 1, y + 1]) &&
+                         TileIsWall(tiles[x, y - 1]) && 
+                         TileIsWall(tiles[x, y + 1]) &&
+                         (tiles[x - 1, y - 1] == TileType.Empty) && 
+                         (tiles[x - 1, y] == TileType.Empty) && 
+                         (tiles[x - 1, y + 1] == TileType.Empty))
+                    {
+                        tiles[x, y] = TileType.WallSN;
+                    }
+                    else if (TileIsWall(tiles[x - 1, y - 1]) && 
+                         TileIsWall(tiles[x, y - 1]) && 
+                         TileIsWall(tiles[x + 1, y - 1]) &&
+                         TileIsWall(tiles[x - 1, y]) && 
+                         TileIsWall(tiles[x + 1, y]) &&
+                         (tiles[x - 1, y + 1] == TileType.Empty) && 
+                         (tiles[x, y + 1] == TileType.Empty) && 
+                         (tiles[x + 1, y + 1] == TileType.Empty))
                     {
                         tiles[x, y] = TileType.WallEO;
+                    }
+                     else if (TileIsWall(tiles[x - 1, y + 1]) && 
+                         TileIsWall(tiles[x, y + 1]) && 
+                         TileIsWall(tiles[x + 1, y + 1]) &&
+                         TileIsWall(tiles[x - 1, y]) && 
+                         TileIsWall(tiles[x + 1, y]) &&
+                         (tiles[x - 1, y - 1] == TileType.Empty) && 
+                         (tiles[x, y - 1] == TileType.Empty) && 
+                         (tiles[x + 1, y - 1] == TileType.Empty))
+                    {
+                        tiles[x, y] = TileType.WallOE;
                     }
                 }
             }
@@ -444,7 +498,7 @@ namespace BlazorRoguelike.Web.Game.DungeonGenerator
 
         private static bool TileIsWall(TileType tile)
         {
-            return (tile >= TileType.Wall && tile <= TileType.WallNESO) || tile == TileType.Void;
+            return (tile >= TileType.WallSN && tile <= TileType.WallNESO) || tile == TileType.Void;
         }
 
         #endregion

@@ -4,6 +4,10 @@
     "type": "spritesheet"
   },
   {
+    "path": "assets/tilesets/dungeon5.json",
+    "type": "spritesheet"
+  },
+  {
     "path": "assets/map-objects.json",
     "type": "map-objects"
   }

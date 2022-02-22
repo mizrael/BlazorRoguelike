@@ -9,8 +9,8 @@ namespace BlazorRoguelike.Web.Game.Components
     public class OffscreenMapRenderer
     {
         private Mechanics.Map _map;
-        private int _tileWidth = 16;
-        private int _tileHeigth = 16;
+        private int _tileWidth = 64;
+        private int _tileHeigth = 64;
         private int _mapWidth;
         private int _mapHeight;
         private readonly Core.Assets.SpriteSheet _tileset;
@@ -21,7 +21,8 @@ namespace BlazorRoguelike.Web.Game.Components
         {
             { TileType.Empty, "floor" }, //
             { TileType.Void, "void" }, //
-            { TileType.WallEO, "walleo" }, //
+            { TileType.WallEO, "walleo" }, //            
+            { TileType.WallOE, "walloe" }, //   
             { TileType.WallESO, "walleso" }, //
             { TileType.WallNE, "wallne" }, //
             { TileType.WallNEO, "wallneo" }, //
@@ -32,7 +33,7 @@ namespace BlazorRoguelike.Web.Game.Components
             { TileType.WallNSO, "wallnso" }, //
             { TileType.WallSE, "wallse" }, //
             { TileType.WallSO, "wallso" }, //
-            { TileType.Wall, "wall" },
+            { TileType.WallSN, "wall" },
             { TileType.Door, "door" }
         };
         

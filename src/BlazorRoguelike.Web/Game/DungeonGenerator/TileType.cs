@@ -2,25 +2,26 @@ namespace BlazorRoguelike.Web.Game.DungeonGenerator
 {
     public enum TileType
     {
-       
-        Door = 43,
+        WallSN = 178,
+        WallNS,
 
-        Wall = 178,
+        WallSE,
+        WallSO,
+        
+        WallNE,
+        WallNO,        
+        
+        WallEO,
+        WallOE,
 
-        WallSE = 179,
-        WallSO = 180,
-        WallNE = 181,
-        WallNO = 182,
+        WallESO,
+        WallNEO,
+        WallNES,
+        WallNSO,
 
-        WallNS = 183,
-        WallEO = 184,
+        WallNESO,
 
-        WallESO = 185,
-        WallNEO = 186,
-        WallNES = 187,
-        WallNSO = 188,
-
-        WallNESO = 189,
+        Door = 210,
 
         Void = 248,
         Empty = 249
