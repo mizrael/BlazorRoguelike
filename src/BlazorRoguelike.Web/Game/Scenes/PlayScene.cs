@@ -33,11 +33,11 @@ namespace BlazorRoguelike.Web.Game.Scenes
         {
             await InitMap();
 
-            InitCursor();
-            InitMovementCursor();
+            //InitCursor();
+            //InitMovementCursor();
 
-            var player = InitPlayer();
-            InitUI(player);
+            //var player = InitPlayer();
+            //InitUI(player);
 
             await base.EnterCore();
         }
@@ -92,15 +92,15 @@ namespace BlazorRoguelike.Web.Game.Scenes
         {
             var availableMapObjects = _assetsResolver.Get<MapObjects>("assets/map-objects.json");
 
-            var roomGenerator = new DungeonGenerator.RoomGenerator(5, 2, 3, 2, 3);
-            var generator = new DungeonGenerator.DungeonGenerator(9, 7, 70, 25, 100, roomGenerator);
+            var roomGenerator = new DungeonGenerator.RoomGenerator(1, 2, 3, 2, 3);
+            var generator = new DungeonGenerator.DungeonGenerator(9, 7, 10, 100, 100, roomGenerator);
             var dungeon = generator.Generate();
             _map = new Map(dungeon, availableMapObjects);
 
             var canvas = await this.Game.Display.CanvasManager.CreateCanvas("map", new CanvasOptions() { Hidden = true });
             var canvasContext = await canvas.CreateCanvas2DAsync();
-            var tileset = _assetsResolver.Get<SpriteSheet>("assets/tilesets/dungeon4.json");
-            var offscreenRenderer = new OffscreenMapRenderer(canvasContext, tileset);
+            var dungeonWallsTileset = _assetsResolver.Get<SpriteSheet>("assets/tilesets/dungeon5.json");
+            var offscreenRenderer = new OffscreenMapRenderer(canvasContext, dungeonWallsTileset);
             offscreenRenderer.Map = _map;
 
             var map = new GameObject(this, ObjectNames.Map);
@@ -115,12 +115,14 @@ namespace BlazorRoguelike.Web.Game.Scenes
             };
 
             this.Root.AddChild(map);
-
-            InitMapObjects(tileset, map);
+                        
+        //    InitMapObjects(map);
         }
 
-        private void InitMapObjects(SpriteSheet tileset, GameObject map)
+        private void InitMapObjects(GameObject map)
         {
+            var mapObjectsTileset = _assetsResolver.Get<SpriteSheet>("assets/tilesets/dungeon4.json");
+
             foreach (var item in _map.Objects)
             {
                 //if (!item.mapObject.Properties.TryGetValue("sprite", out var tmpProp))
@@ -132,7 +134,7 @@ namespace BlazorRoguelike.Web.Game.Scenes
                 if (!item.mapObject.TryGetProperty<string>("sprite", out var spriteName))
                     continue;
 
-                var sprite = tileset.GetSprite(spriteName);
+                var sprite = mapObjectsTileset.GetSprite(spriteName);
                 if (null == sprite)
                     continue;
 
