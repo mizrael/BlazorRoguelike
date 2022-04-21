@@ -9,8 +9,8 @@ namespace BlazorRoguelike.Web.Game.Components
     public class OffscreenMapRenderer
     {
         private Mechanics.Map _map;
-        private int _tileWidth = 64;
-        private int _tileHeigth = 64;
+        private int _tileWidth = 16;
+        private int _tileHeigth = 16;
         private int _mapWidth;
         private int _mapHeight;
         private readonly Core.Assets.SpriteSheet _tileset;

@@ -33,11 +33,11 @@ namespace BlazorRoguelike.Web.Game.Scenes
         {
             await InitMap();
 
-            //InitCursor();
-            //InitMovementCursor();
+            InitCursor();
+            InitMovementCursor();
 
-            //var player = InitPlayer();
-            //InitUI(player);
+            var player = InitPlayer();
+            InitUI(player);
 
             await base.EnterCore();
         }
@@ -92,8 +92,8 @@ namespace BlazorRoguelike.Web.Game.Scenes
         {
             var availableMapObjects = _assetsResolver.Get<MapObjects>("assets/map-objects.json");
 
-            var roomGenerator = new DungeonGenerator.RoomGenerator(1, 2, 3, 2, 3);
-            var generator = new DungeonGenerator.DungeonGenerator(9, 7, 10, 100, 100, roomGenerator);
+            var roomGenerator = new DungeonGenerator.RoomGenerator(2, 2, 3, 2, 3);
+            var generator = new DungeonGenerator.DungeonGenerator(9, 7, 70, 90, 100, roomGenerator);
             var dungeon = generator.Generate();
             _map = new Map(dungeon, availableMapObjects);
 
@@ -116,7 +116,7 @@ namespace BlazorRoguelike.Web.Game.Scenes
 
             this.Root.AddChild(map);
                         
-        //    InitMapObjects(map);
+            InitMapObjects(map);
         }
 
         private void InitMapObjects(GameObject map)
